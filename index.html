@@ -458,25 +458,11 @@ ren.setSize(innerWidth,innerHeight);
 ren.setPixelRatio(Math.min(devicePixelRatio,2));
 cam.position.z=4;
 
-// Create circular particle texture FIRST
-const texCanvas=document.createElement('canvas');
-texCanvas.width=128;texCanvas.height=128;
-const texCtx=texCanvas.getContext('2d');
-// Clear with transparent
-texCtx.clearRect(0,0,128,128);
-// Draw soft circle
-const grad=texCtx.createRadialGradient(64,64,0,64,64,64);
-grad.addColorStop(0,'rgba(255,255,255,1)');
-grad.addColorStop(0.15,'rgba(255,255,255,0.95)');
-grad.addColorStop(0.4,'rgba(255,255,255,0.5)');
-grad.addColorStop(0.7,'rgba(255,255,255,0.15)');
-grad.addColorStop(1,'rgba(255,255,255,0)');
-texCtx.fillStyle=grad;
-texCtx.fillRect(0,0,128,128);
-const circleTex=new THREE.CanvasTexture(texCanvas);
+// Create circular particle texture using data URL
+const _img=new Image();
+_img.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABmJLR0QA/wD/AP+gvaeTAAAAWklEQVR4nO3BMQEAAADCoPVPbQlPoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHgYJVwABbNinJQAAAABJRU5ErkJggg==';
+const circleTex=new THREE.Texture(_img);
 circleTex.needsUpdate=true;
-circleTex.minFilter=THREE.LinearFilter;
-circleTex.magFilter=THREE.LinearFilter;
 
 const N=10000,geo=new THREE.BufferGeometry();
 const p=new Float32Array(N*3),cl=new Float32Array(N*3),vl=new Float32Array(N*3);
