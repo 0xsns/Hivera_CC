@@ -464,7 +464,7 @@ _img.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAx
 const circleTex=new THREE.Texture(_img);
 circleTex.needsUpdate=true;
 
-const N=20000,geo=new THREE.BufferGeometry();
+const N=5000,geo=new THREE.BufferGeometry();
 const p=new Float32Array(N*3),cl=new Float32Array(N*3),vl=new Float32Array(N*3);
 const pal=[[1,.843,0],[1,.769,.141],[.854,.647,.125],[1,.922,.533]];
 for(let i=0;i<N;i++){
