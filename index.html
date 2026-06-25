@@ -220,7 +220,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 <body>
 
 <div class="progress" id="progress"></div>
-<div id="loader"><div class="loader-sparkles"></div></div>
+<div id="loader"><canvas id="loader-canvas"></canvas></div>
 <div class="cursor-dot" id="cDot"></div>
 <div class="cursor-ring" id="cRing"></div>
 <div id="bg-texture">
@@ -596,7 +596,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 // LOADER
 // ═══════════════════════════════════════════
 let loadVal=0;
-const loadEl=document.getElementById('loaderNum');
+
 const loader=document.getElementById('loader');
 function tickLoader(){
   if(loadVal<100){
