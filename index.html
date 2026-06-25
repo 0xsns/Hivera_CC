@@ -2,142 +2,453 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hivera — Portfolio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hivera — Digital Craft</title>
+<meta name="description" content="Hivera builds AI & Web3 products. Portfolio of digital craft.">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-:root{--bg:#000;--text:#fff;--accent:#ff6b00;--accent2:#8b3fff;--muted:#666}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;scrollbar-width:none}
-html::-webkit-scrollbar{display:none}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden}
+:root {
+  --bg: #000;
+  --text: #fff;
+  --accent: #ff6b00;
+  --accent2: #8b3fff;
+  --muted: #555;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-/* THREE.JS CANVAS */
-#three-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* LOADER */
-#loader{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity .8s ease,visibility .8s}
-#loader.hidden{opacity:0;visibility:hidden}
-.loader-text{font-size:12px;letter-spacing:6px;text-transform:uppercase;color:#666;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar { display: none; }
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;mix-blend-mode:difference}
-.nav-logo{font-size:14px;letter-spacing:4px;text-transform:uppercase;font-weight:700;text-decoration:none;color:#fff}
-.nav-links{display:flex;gap:32px;list-style:none}
-.nav-links a{color:#fff;text-decoration:none;font-size:13px;letter-spacing:1px;text-transform:uppercase;opacity:.5;transition:opacity .3s}
-.nav-links a:hover{opacity:1}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
 
-/* HERO */
-#hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 8vw}
-.hero-label{font-size:11px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
-.hero-title{font-size:clamp(48px,10vw,120px);font-weight:700;line-height:.95;letter-spacing:-3px}
-.hero-title .line{display:block;overflow:hidden}
-.hero-title .line span{display:inline-block;transform:translateY(100%);animation:slideUp .8s ease forwards}
-.hero-title .line:nth-child(2) span{animation-delay:.15s}
-.hero-title .line:nth-child(3) span{animation-delay:.3s}
-.hero-title .accent{color:var(--accent)}
-.hero-title .accent2{color:var(--accent2)}
-@keyframes slideUp{to{transform:translateY(0)}}
-.hero-sub{max-width:500px;margin-top:40px;font-size:16px;line-height:1.7;color:var(--muted);font-weight:300}
-.hero-scroll{position:absolute;bottom:40px;left:8vw;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px}
-.hero-scroll::after{content:'';width:1px;height:40px;background:var(--muted);animation:scrollPulse 2s infinite}
-@keyframes scrollPulse{0%,100%{opacity:1;height:40px}50%{opacity:.3;height:20px}}
+::selection { background: var(--accent); color: #000; }
 
-/* SECTION COMMON */
-section{position:relative;z-index:1;padding:120px 8vw}
-.section-label{font-size:11px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-.section-title{font-size:clamp(32px,5vw,56px);font-weight:700;line-height:1.1;letter-spacing:-2px}
-.section-title .accent{color:var(--accent)}
+/* ═══════════════════════════════════════════
+   CUSTOM CURSOR
+   ═══════════════════════════════════════════ */
+.cursor { position: fixed; top: 0; left: 0; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 99999; mix-blend-mode: difference; transition: transform 0.15s var(--ease), opacity 0.3s; transform: translate(-50%, -50%); }
+.cursor.active { transform: translate(-50%, -50%) scale(4); opacity: 0.5; }
+.cursor-follower { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; pointer-events: none; z-index: 99998; transition: transform 0.4s var(--ease), width 0.4s var(--ease), height 0.4s var(--ease), border-color 0.3s; transform: translate(-50%, -50%); }
+.cursor-follower.active { width: 80px; height: 80px; border-color: var(--accent); }
 
-/* PROJECTS — HORIZONTAL SCROLL LIKE ACTIVE THEORY */
-#projects{padding:120px 0}
-#projects .section-label,#projects .section-title{padding:0 8vw}
-.projects-track{display:flex;gap:40px;padding:60px 8vw;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.projects-track::-webkit-scrollbar{display:none}
-.project-card{min-width:400px;max-width:400px;scroll-snap-align:start;background:#111;border-radius:16px;overflow:hidden;border:1px solid #222;transition:transform .4s cubic-bezier(.22,1,.36,1),border-color .4s;cursor:pointer}
-.project-card:hover{transform:scale(1.02);border-color:var(--accent)}
-.project-card-media{height:240px;background:#1a1a1a;position:relative;overflow:hidden}
-.project-card-media .gradient{position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--accent2));opacity:0;transition:opacity .6s}
-.project-card:hover .gradient{opacity:.8}
-.project-card-media .icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;color:rgba(255,255,255,.1);transition:transform .6s cubic-bezier(.22,1,.36,1)}
-.project-card:hover .icon{transform:scale(1.5) rotate(10deg);color:rgba(255,255,255,.3)}
-.project-card-body{padding:24px}
-.project-card-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-.project-card-name{font-size:18px;font-weight:600;margin-bottom:8px;line-height:1.3}
-.project-card-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
-.project-card-tech{display:flex;flex-wrap:wrap;gap:6px}
-.tech-pill{font-size:10px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid #222}
+@media (max-width: 768px) {
+  .cursor, .cursor-follower { display: none !important; }
+  body { cursor: auto; }
+}
 
-/* SERVICES — GRID */
-#services{padding:120px 8vw}
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px}
-.service-card{background:rgba(255,255,255,.02);border:1px solid #1a1a1a;border-radius:16px;padding:40px 32px;transition:all .4s cubic-bezier(.22,1,.36,1)}
-.service-card:hover{border-color:var(--accent);background:rgba(255,107,0,.03)}
-.service-card:hover .service-num{color:var(--accent)}
-.service-num{font-size:48px;font-weight:700;color:#222;transition:color .4s;line-height:1}
-.service-name{font-size:16px;font-weight:600;margin:20px 0 10px}
-.service-desc{font-size:13px;color:var(--muted);line-height:1.6}
+/* ═══════════════════════════════════════════
+   FILM GRAIN OVERLAY
+   ═══════════════════════════════════════════ */
+.grain {
+  position: fixed; inset: 0; z-index: 9998; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.5;
+  animation: grainShift 0.5s steps(4) infinite;
+}
+@keyframes grainShift {
+  0% { transform: translate(0,0) }
+  25% { transform: translate(-2px, 2px) }
+  50% { transform: translate(2px, -2px) }
+  75% { transform: translate(-1px, -1px) }
+  100% { transform: translate(1px, 1px) }
+}
 
-/* SKILLS — MARQUEE */
-#skills{padding:120px 8vw;overflow:hidden}
-.marquee-wrap{margin-top:60px;overflow:hidden;white-space:nowrap}
-.marquee{display:inline-flex;animation:marquee 30s linear infinite;gap:20px}
-.marquee span{font-size:clamp(40px,6vw,72px);font-weight:700;color:#111;letter-spacing:-2px;transition:color .3s}
-.marquee span:hover{color:var(--accent)}
-@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.marquee-2{animation-direction:reverse;animation-duration:25s}
-.marquee-2 span{color:#0a0a0a}
-.marquee-2 span:hover{color:var(--accent2)}
+/* ═══════════════════════════════════════════
+   LOADER — CINEMATIC
+   ═══════════════════════════════════════════ */
+#loader {
+  position: fixed; inset: 0; background: #000; z-index: 99999;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  transition: opacity 1s var(--ease), visibility 1s;
+}
+#loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-/* EXPERIENCE — TIMELINE */
-#experience{padding:120px 8vw}
-.timeline{margin-top:60px;position:relative}
-.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:#1a1a1a}
-.timeline-item{padding-left:40px;padding-bottom:60px;position:relative}
-.timeline-item::before{content:'';position:absolute;left:-4px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
-.timeline-year{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.timeline-title{font-size:20px;font-weight:600;margin-bottom:4px}
-.timeline-org{font-size:13px;color:var(--accent2);margin-bottom:12px}
-.timeline-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.loader-bar-wrap {
+  width: 200px; height: 1px; background: #1a1a1a; position: relative; margin-top: 30px;
+}
+.loader-bar {
+  height: 100%; background: var(--accent); width: 0%; transition: width 0.3s;
+}
+.loader-text {
+  font-size: 10px; letter-spacing: 8px; text-transform: uppercase; color: var(--muted);
+}
+.loader-counter {
+  font-size: 11px; letter-spacing: 4px; color: #333; margin-top: 12px; font-variant-numeric: tabular-nums;
+}
 
-/* CONTACT */
-#contact{padding:120px 8vw;text-align:center}
-.contact-title{font-size:clamp(36px,6vw,72px);font-weight:700;letter-spacing:-3px;line-height:1;margin-bottom:40px}
-.contact-title .accent{color:var(--accent)}
-.contact-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
-.contact-link{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:16px 32px;border:1px solid #222;border-radius:100px;transition:all .3s}
-.contact-link:hover{color:var(--accent);border-color:var(--accent)}
+/* ═══════════════════════════════════════════
+   THREE.JS CANVAS
+   ═══════════════════════════════════════════ */
+#three-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-/* FOOTER */
-footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:11px;color:#333;letter-spacing:2px;text-transform:uppercase}
+/* ═══════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 28px 48px; display: flex; align-items: center; justify-content: space-between;
+  mix-blend-mode: difference;
+}
+.nav-logo {
+  font-size: 13px; letter-spacing: 5px; text-transform: uppercase; font-weight: 700;
+  text-decoration: none; color: #fff; position: relative;
+}
+.nav-logo::after {
+  content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent);
+  transition: width 0.4s var(--ease);
+}
+.nav-logo:hover::after { width: 100%; }
+.nav-links { display: flex; gap: 40px; list-style: none; }
+.nav-links a {
+  color: #fff; text-decoration: none; font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; opacity: 0.35; transition: opacity 0.4s;
+  position: relative; padding-bottom: 4px;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
+  background: var(--accent); transition: width 0.4s var(--ease);
+}
+.nav-links a:hover { opacity: 1; }
+.nav-links a:hover::after { width: 100%; }
 
-/* REVEAL ANIMATION */
-.reveal{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.22,1,.36,1)}
-.reveal.visible{opacity:1;transform:translateY(0)}
+.nav-menu-btn {
+  display: none; background: none; border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; padding: 10px 20px; font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; cursor: none; font-family: inherit; transition: border-color 0.3s;
+}
+.nav-menu-btn:hover { border-color: var(--accent); }
 
-/* MOBILE */
-@media(max-width:768px){
-  nav{padding:16px 20px}
-  .nav-links{display:none}
-  #hero{padding:0 20px}
-  section{padding:80px 20px}
-  .services-grid{grid-template-columns:1fr}
-  .project-card{min-width:300px;max-width:300px}
-  .projects-track{padding:40px 20px}
-  .contact-links{flex-direction:column;align-items:center}
+@media (max-width: 768px) {
+  nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+  .nav-menu-btn { display: block; }
+}
+
+/* ═══════════════════════════════════════════
+   HERO — FULLSCREEN
+   ═══════════════════════════════════════════ */
+#hero {
+  position: relative; z-index: 1; min-height: 100vh; display: flex;
+  flex-direction: column; justify-content: center; padding: 0 8vw;
+}
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 8px; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 32px; overflow: hidden;
+}
+.hero-eyebrow span {
+  display: inline-block; transform: translateY(120%);
+  animation: textReveal 0.8s var(--ease) 1.8s forwards;
+}
+.hero-title {
+  font-size: clamp(52px, 10vw, 140px); font-weight: 700; line-height: 0.92;
+  letter-spacing: -4px;
+}
+.hero-title .line { display: block; overflow: hidden; }
+.hero-title .line span {
+  display: inline-block; transform: translateY(110%);
+  animation: textReveal 1s var(--ease) forwards;
+}
+.hero-title .line:nth-child(1) span { animation-delay: 2s; }
+.hero-title .line:nth-child(2) span { animation-delay: 2.15s; }
+.hero-title .line:nth-child(3) span { animation-delay: 2.3s; }
+.hero-title .accent { color: var(--accent); }
+.hero-title .accent2 { color: var(--accent2); }
+@keyframes textReveal { to { transform: translateY(0); } }
+
+.hero-sub {
+  max-width: 480px; margin-top: 48px; font-size: 15px; line-height: 1.8;
+  color: var(--muted); font-weight: 300; opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.8s var(--ease) 2.6s forwards;
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+.hero-scroll {
+  position: absolute; bottom: 48px; left: 8vw;
+  font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--muted);
+  display: flex; align-items: center; gap: 16px;
+  opacity: 0; animation: fadeUp 0.6s var(--ease) 3s forwards;
+}
+.hero-scroll-line {
+  width: 1px; height: 48px; background: linear-gradient(to bottom, var(--muted), transparent);
+  animation: scrollPulse 2.5s ease infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: 0.3; transform: scaleY(0.5); }
+}
+
+.hero-cta {
+  margin-top: 48px; display: flex; gap: 20px; opacity: 0; animation: fadeUp 0.6s var(--ease) 2.8s forwards;
+}
+.btn-magnetic {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 36px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  text-decoration: none; border-radius: 100px; font-family: inherit; font-weight: 500;
+  transition: all 0.4s var(--ease); position: relative; overflow: hidden; cursor: none;
+}
+.btn-primary {
+  background: var(--accent); color: #000; border: 1px solid var(--accent);
+}
+.btn-primary:hover { background: #fff; border-color: #fff; }
+.btn-ghost {
+  background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.15);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+.btn-arrow { transition: transform 0.4s var(--ease); }
+.btn-magnetic:hover .btn-arrow { transform: translateX(4px); }
+
+/* ═══════════════════════════════════════════
+   SECTION SHARED
+   ═══════════════════════════════════════════ */
+.section { position: relative; z-index: 1; padding: 140px 8vw; }
+.section-label {
+  font-size: 10px; letter-spacing: 8px; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 20px;
+}
+.section-title {
+  font-size: clamp(36px, 5vw, 64px); font-weight: 700; line-height: 1.05;
+  letter-spacing: -2px;
+}
+.section-title .accent { color: var(--accent); }
+
+/* ═══════════════════════════════════════════
+   PROJECTS — FULLSCREEN HORIZONTAL DRAG
+   ═══════════════════════════════════════════ */
+#projects { padding: 140px 0 140px 8vw; overflow: hidden; }
+#projects .section-label, #projects .section-title { padding-right: 8vw; }
+
+.projects-wrapper { margin-top: 64px; position: relative; }
+.projects-track {
+  display: flex; gap: 32px; padding-bottom: 40px; cursor: grab;
+  -webkit-overflow-scrolling: touch; scroll-behavior: auto;
+}
+.projects-track:active { cursor: grabbing; }
+.projects-track::-webkit-scrollbar { display: none; }
+
+.project-card {
+  min-width: 480px; max-width: 480px; background: #0a0a0a;
+  border-radius: 20px; overflow: hidden; border: 1px solid #151515;
+  transition: transform 0.6s var(--ease), border-color 0.4s;
+  flex-shrink: 0; position: relative;
+}
+.project-card:hover { transform: translateY(-8px); border-color: rgba(255,107,0,0.3); }
+
+.project-card-media {
+  height: 280px; background: #111; position: relative; overflow: hidden;
+}
+.project-card-media .gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  opacity: 0; transition: opacity 0.8s var(--ease);
+}
+.project-card:hover .gradient { opacity: 0.7; }
+.project-card-media .icon {
+  position: absolute; inset: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 56px;
+  color: rgba(255,255,255,0.06); transition: all 0.8s var(--ease);
+}
+.project-card:hover .icon { transform: scale(1.4) rotate(8deg); color: rgba(255,255,255,0.2); }
+
+.project-card-body { padding: 28px 32px; }
+.project-card-tag {
+  font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 12px;
+}
+.project-card-name { font-size: 20px; font-weight: 600; margin-bottom: 10px; line-height: 1.3; }
+.project-card-desc {
+  font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 20px;
+}
+.project-card-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+.tech-pill {
+  font-size: 9px; padding: 5px 12px; border-radius: 100px;
+  background: rgba(255,255,255,0.03); color: var(--muted);
+  border: 1px solid #1a1a1a; letter-spacing: 0.5px;
+}
+
+.projects-drag-hint {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: #333; margin-top: 24px; display: flex; align-items: center; gap: 12px;
+}
+.projects-drag-hint::after {
+  content: ''; width: 40px; height: 1px; background: #333;
+}
+
+@media (max-width: 768px) {
+  .project-card { min-width: 300px; max-width: 300px; }
+}
+
+/* ═══════════════════════════════════════════
+   SERVICES — STAGGER GRID
+   ═══════════════════════════════════════════ */
+#services { padding: 140px 8vw; }
+.services-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 64px;
+}
+.service-card {
+  background: rgba(255,255,255,0.015); border: 1px solid #111;
+  border-radius: 20px; padding: 44px 36px;
+  transition: all 0.5s var(--ease); position: relative; overflow: hidden;
+}
+.service-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0; transition: opacity 0.5s;
+}
+.service-card:hover::before { opacity: 1; }
+.service-card:hover {
+  border-color: rgba(255,107,0,0.2); background: rgba(255,107,0,0.02);
+  transform: translateY(-4px);
+}
+.service-num {
+  font-size: 56px; font-weight: 700; color: #151515; transition: color 0.5s;
+  line-height: 1; font-variant-numeric: tabular-nums;
+}
+.service-card:hover .service-num { color: var(--accent); }
+.service-name { font-size: 17px; font-weight: 600; margin: 24px 0 12px; }
+.service-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+@media (max-width: 768px) { .services-grid { grid-template-columns: 1fr; } }
+
+/* ═══════════════════════════════════════════
+   SKILLS — MARQUEE
+   ═══════════════════════════════════════════ */
+#skills { padding: 120px 0; overflow: hidden; }
+.marquee-wrap { margin-top: 56px; overflow: hidden; white-space: nowrap; }
+.marquee {
+  display: inline-flex; animation: marquee 35s linear infinite; gap: 24px;
+}
+.marquee span {
+  font-size: clamp(44px, 7vw, 80px); font-weight: 700; color: #0d0d0d;
+  letter-spacing: -2px; transition: color 0.3s; user-select: none;
+}
+.marquee span:hover { color: var(--accent); }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.marquee-reverse { animation-direction: reverse; animation-duration: 28s; }
+.marquee-reverse span { color: #080808; }
+.marquee-reverse span:hover { color: var(--accent2); }
+
+/* ═══════════════════════════════════════════
+   EXPERIENCE — TIMELINE
+   ═══════════════════════════════════════════ */
+#experience { padding: 140px 8vw; }
+.timeline { margin-top: 64px; position: relative; }
+.timeline::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, transparent, #1a1a1a, transparent);
+}
+.timeline-item {
+  padding-left: 48px; padding-bottom: 64px; position: relative;
+}
+.timeline-item::before {
+  content: ''; position: absolute; left: -4px; top: 8px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg);
+  box-shadow: 0 0 16px rgba(255,107,0,0.3);
+}
+.timeline-year {
+  font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 12px;
+}
+.timeline-title { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+.timeline-org { font-size: 13px; color: var(--accent2); margin-bottom: 14px; letter-spacing: 0.5px; }
+.timeline-desc { font-size: 13px; color: var(--muted); line-height: 1.7; max-width: 480px; }
+
+/* ═══════════════════════════════════════════
+   CONTACT — BIG CTA
+   ═══════════════════════════════════════════ */
+#contact {
+  padding: 180px 8vw; text-align: center; position: relative;
+}
+.contact-title {
+  font-size: clamp(40px, 7vw, 88px); font-weight: 700;
+  letter-spacing: -4px; line-height: 0.95; margin-bottom: 56px;
+}
+.contact-title .accent { color: var(--accent); }
+.contact-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+.contact-link {
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; padding: 18px 40px;
+  border: 1px solid #1a1a1a; border-radius: 100px;
+  transition: all 0.4s var(--ease); cursor: none;
+}
+.contact-link:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+footer {
+  position: relative; z-index: 1; text-align: center;
+  padding: 48px 8vw; font-size: 10px; color: #222;
+  letter-spacing: 3px; text-transform: uppercase;
+  border-top: 1px solid #0a0a0a;
+}
+
+/* ═══════════════════════════════════════════
+   REVEAL ANIMATIONS
+   ═══════════════════════════════════════════ */
+.reveal {
+  opacity: 0; transform: translateY(60px);
+  transition: opacity 1s var(--ease), transform 1s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ═══════════════════════════════════════════
+   SCROLL PROGRESS BAR
+   ═══════════════════════════════════════════ */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; width: 0%; height: 1px;
+  background: var(--accent); z-index: 9999; transition: width 0.1s;
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  #hero { padding: 0 24px; }
+  .section { padding: 80px 24px; }
+  #projects { padding: 80px 0 80px 24px; }
+  .hero-cta { flex-direction: column; }
+  .btn-magnetic { width: 100%; justify-content: center; }
+  .contact-links { flex-direction: column; align-items: center; }
+  .contact-link { width: 100%; max-width: 280px; text-align: center; }
 }
 </style>
 </head>
 <body>
 
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- FILM GRAIN -->
+<div class="grain"></div>
+
 <!-- LOADER -->
 <div id="loader">
-  <div class="loader-text">Loading Experience</div>
+  <div class="loader-text">Loading</div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
+  <div class="loader-counter" id="loaderCounter">0%</div>
 </div>
 
-<!-- THREE.JS BG -->
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursorFollower"></div>
+
+<!-- THREE.JS -->
 <canvas id="three-bg"></canvas>
 
 <!-- NAV -->
@@ -150,131 +461,146 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
     <li><a href="#experience">Journey</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <button class="nav-menu-btn">Menu</button>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-label">Web3 · AI · Builder</div>
+  <div class="hero-eyebrow"><span>Web3 · AI · Builder</span></div>
   <h1 class="hero-title">
     <span class="line"><span>Hivera</span></span>
     <span class="line"><span>Builds <span class="accent">AI</span></span></span>
     <span class="line"><span>& <span class="accent2">Web3</span> Products</span></span>
   </h1>
   <p class="hero-sub">Building practical blockchain dashboards, AI agents, and digital products. Focused on real utility, clean execution, and shipping fast.</p>
-  <div class="hero-scroll">Scroll to explore</div>
+  <div class="hero-cta">
+    <a href="#projects" class="btn-magnetic btn-primary">
+      View Work <span class="btn-arrow">→</span>
+    </a>
+    <a href="#contact" class="btn-magnetic btn-ghost">
+      Get in Touch <span class="btn-arrow">→</span>
+    </a>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    Scroll
+  </div>
 </section>
 
 <!-- PROJECTS -->
 <section id="projects">
   <div class="section-label reveal">Selected Work</div>
   <div class="section-title reveal">Projects That <span class="accent">Ship</span></div>
-  <div class="projects-track">
+  <div class="projects-wrapper">
+    <div class="projects-track" id="projectsTrack">
 
-    <div class="project-card reveal">
-      <div class="project-card-media">
-        <div class="gradient"></div>
-        <div class="icon">🚀</div>
-      </div>
-      <div class="project-card-body">
-        <div class="project-card-tag">MVP</div>
-        <div class="project-card-name">Sailor Web3 Wallet Intelligence</div>
-        <div class="project-card-desc">Multichain wallet dashboard — portfolio tracking, wallet score, transaction history, security risk, and AI assistance.</div>
-        <div class="project-card-tech">
-          <span class="tech-pill">Next.js</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Wagmi</span><span class="tech-pill">Viem</span>
+      <div class="project-card">
+        <div class="project-card-media">
+          <div class="gradient"></div>
+          <div class="icon">🚀</div>
+        </div>
+        <div class="project-card-body">
+          <div class="project-card-tag">MVP</div>
+          <div class="project-card-name">Sailor Web3 Wallet Intelligence</div>
+          <div class="project-card-desc">Multichain wallet dashboard — portfolio tracking, wallet score, transaction history, security risk, and AI assistance.</div>
+          <div class="project-card-tech">
+            <span class="tech-pill">Next.js</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Wagmi</span><span class="tech-pill">Viem</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="project-card reveal">
-      <div class="project-card-media">
-        <div class="gradient" style="background:linear-gradient(135deg,#8b3fff,#00e5ff)"></div>
-        <div class="icon">🤖</div>
-      </div>
-      <div class="project-card-body">
-        <div class="project-card-tag">Prototype</div>
-        <div class="project-card-name">Sailor Web3 AI Agent</div>
-        <div class="project-card-desc">Modular Web3 AI agent dashboard — DeFi analysis, DAO voting, contract debugging, multi-wallet aggregation.</div>
-        <div class="project-card-tech">
-          <span class="tech-pill">Next.js</span><span class="tech-pill">Gemini</span><span class="tech-pill">Pharos</span>
+      <div class="project-card">
+        <div class="project-card-media">
+          <div class="gradient" style="background:linear-gradient(135deg,#8b3fff,#00e5ff)"></div>
+          <div class="icon">🤖</div>
+        </div>
+        <div class="project-card-body">
+          <div class="project-card-tag">Prototype</div>
+          <div class="project-card-name">Sailor Web3 AI Agent</div>
+          <div class="project-card-desc">Modular Web3 AI agent dashboard — DeFi analysis, DAO voting, contract debugging, multi-wallet aggregation.</div>
+          <div class="project-card-tech">
+            <span class="tech-pill">Next.js</span><span class="tech-pill">Gemini</span><span class="tech-pill">Pharos</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="project-card reveal">
-      <div class="project-card-media">
-        <div class="gradient" style="background:linear-gradient(135deg,#ff2d78,#8b3fff)"></div>
-        <div class="icon">📄</div>
-      </div>
-      <div class="project-card-body">
-        <div class="project-card-tag">Live</div>
-        <div class="project-card-name">CV Builder ATS & Modern Resume</div>
-        <div class="project-card-desc">Resume builder — ATS-friendly templates, real-time preview, PDF/DOCX export.</div>
-        <div class="project-card-tech">
-          <span class="tech-pill">Next.js</span><span class="tech-pill">Tailwind</span><span class="tech-pill">PDF Export</span>
+      <div class="project-card">
+        <div class="project-card-media">
+          <div class="gradient" style="background:linear-gradient(135deg,#ff2d78,#8b3fff)"></div>
+          <div class="icon">📄</div>
+        </div>
+        <div class="project-card-body">
+          <div class="project-card-tag">Live</div>
+          <div class="project-card-name">CV Builder ATS & Modern Resume</div>
+          <div class="project-card-desc">Resume builder — ATS-friendly templates, real-time preview, PDF/DOCX export.</div>
+          <div class="project-card-tech">
+            <span class="tech-pill">Next.js</span><span class="tech-pill">Tailwind</span><span class="tech-pill">PDF Export</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="project-card reveal">
-      <div class="project-card-media">
-        <div class="gradient" style="background:linear-gradient(135deg,#00e5ff,#ff6b00)"></div>
-        <div class="icon">🗳️</div>
-      </div>
-      <div class="project-card-body">
-        <div class="project-card-tag">Live</div>
-        <div class="project-card-name">Voting Web App with X Login</div>
-        <div class="project-card-desc">Voting platform — X account authentication, one verified vote per user.</div>
-        <div class="project-card-tech">
-          <span class="tech-pill">Next.js</span><span class="tech-pill">Auth</span><span class="tech-pill">Vercel</span>
+      <div class="project-card">
+        <div class="project-card-media">
+          <div class="gradient" style="background:linear-gradient(135deg,#00e5ff,#ff6b00)"></div>
+          <div class="icon">🗳️</div>
+        </div>
+        <div class="project-card-body">
+          <div class="project-card-tag">Live</div>
+          <div class="project-card-name">Voting Web App with X Login</div>
+          <div class="project-card-desc">Voting platform — X account authentication, one verified vote per user.</div>
+          <div class="project-card-tech">
+            <span class="tech-pill">Next.js</span><span class="tech-pill">Auth</span><span class="tech-pill">Vercel</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="project-card reveal">
-      <div class="project-card-media">
-        <div class="gradient" style="background:linear-gradient(135deg,#ffd600,#ff6b00)"></div>
-        <div class="icon">🎙️</div>
-      </div>
-      <div class="project-card-body">
-        <div class="project-card-tag">Live</div>
-        <div class="project-card-name">XMatch</div>
-        <div class="project-card-desc">Anonymous random voice and text chat for X users.</div>
-        <div class="project-card-tech">
-          <span class="tech-pill">Next.js 15</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Tailwind</span>
+      <div class="project-card">
+        <div class="project-card-media">
+          <div class="gradient" style="background:linear-gradient(135deg,#ffd600,#ff6b00)"></div>
+          <div class="icon">🎙️</div>
+        </div>
+        <div class="project-card-body">
+          <div class="project-card-tag">Live</div>
+          <div class="project-card-name">XMatch</div>
+          <div class="project-card-desc">Anonymous random voice and text chat for X users.</div>
+          <div class="project-card-tech">
+            <span class="tech-pill">Next.js 15</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Tailwind</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="project-card reveal">
-      <div class="project-card-media">
-        <div class="gradient" style="background:linear-gradient(135deg,#8b3fff,#ff2d78)"></div>
-        <div class="icon">🎬</div>
-      </div>
-      <div class="project-card-body">
-        <div class="project-card-tag">Live</div>
-        <div class="project-card-name">AI Clipper Agent</div>
-        <div class="project-card-desc">Local workflow — YouTube video → transcript → smart moment selection → auto short clips.</div>
-        <div class="project-card-tech">
-          <span class="tech-pill">Next.js</span><span class="tech-pill">Python</span><span class="tech-pill">Whisper</span>
+      <div class="project-card">
+        <div class="project-card-media">
+          <div class="gradient" style="background:linear-gradient(135deg,#8b3fff,#ff2d78)"></div>
+          <div class="icon">🎬</div>
+        </div>
+        <div class="project-card-body">
+          <div class="project-card-tag">Live</div>
+          <div class="project-card-name">AI Clipper Agent</div>
+          <div class="project-card-desc">Local workflow — YouTube video → transcript → smart moment selection → auto short clips.</div>
+          <div class="project-card-tech">
+            <span class="tech-pill">Next.js</span><span class="tech-pill">Python</span><span class="tech-pill">Whisper</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="project-card reveal">
-      <div class="project-card-media">
-        <div class="gradient" style="background:linear-gradient(135deg,#ff6b00,#ffd600)"></div>
-        <div class="icon">🧬</div>
-      </div>
-      <div class="project-card-body">
-        <div class="project-card-tag">Live</div>
-        <div class="project-card-name">Solana Meme Intelligence</div>
-        <div class="project-card-desc">Telegram intelligence + real trading agent for Solana meme coins.</div>
-        <div class="project-card-tech">
-          <span class="tech-pill">Next.js 15</span><span class="tech-pill">Telegraf</span><span class="tech-pill">Solana</span>
+      <div class="project-card">
+        <div class="project-card-media">
+          <div class="gradient" style="background:linear-gradient(135deg,#ff6b00,#ffd600)"></div>
+          <div class="icon">🧬</div>
+        </div>
+        <div class="project-card-body">
+          <div class="project-card-tag">Live</div>
+          <div class="project-card-name">Solana Meme Intelligence</div>
+          <div class="project-card-desc">Telegram intelligence + real trading agent for Solana meme coins.</div>
+          <div class="project-card-tech">
+            <span class="tech-pill">Next.js 15</span><span class="tech-pill">Telegraf</span><span class="tech-pill">Solana</span>
+          </div>
         </div>
       </div>
-    </div>
 
+    </div>
+    <div class="projects-drag-hint">Drag to explore</div>
   </div>
 </section>
 
@@ -288,12 +614,12 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
       <div class="service-name">Wallet Intelligence</div>
       <div class="service-desc">Portfolio tracking, wallet score, transaction insights, and onchain risk signals.</div>
     </div>
-    <div class="service-card reveal">
+    <div class="service-card reveal reveal-delay-1">
       <div class="service-num">02</div>
       <div class="service-name">AI Agent Systems</div>
       <div class="service-desc">Prompt workflows, automation modules, and product-ready AI assistant interfaces.</div>
     </div>
-    <div class="service-card reveal">
+    <div class="service-card reveal reveal-delay-2">
       <div class="service-num">03</div>
       <div class="service-name">Dashboard UI</div>
       <div class="service-desc">Clean analytics screens for Web3 products, campaigns, and founders.</div>
@@ -303,12 +629,12 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
       <div class="service-name">Community Management</div>
       <div class="service-desc">Managing discussions, maintaining quality, and healthy Web3 community env.</div>
     </div>
-    <div class="service-card reveal">
+    <div class="service-card reveal reveal-delay-1">
       <div class="service-num">05</div>
       <div class="service-name">Content & Ambassador</div>
       <div class="service-desc">Web3 educational content, campaign threads, and project explainers.</div>
     </div>
-    <div class="service-card reveal">
+    <div class="service-card reveal reveal-delay-2">
       <div class="service-num">06</div>
       <div class="service-name">Server & Infra</div>
       <div class="service-desc">VPS setup, Discord server structuring, automation bots, and deployment.</div>
@@ -318,16 +644,18 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 
 <!-- SKILLS MARQUEE -->
 <section id="skills">
-  <div class="section-label reveal">Skill Map</div>
-  <div class="section-title reveal">Tools I <span class="accent">Use</span></div>
+  <div style="padding: 0 8vw;">
+    <div class="section-label reveal">Skill Map</div>
+    <div class="section-title reveal">Tools I <span class="accent">Use</span></div>
+  </div>
   <div class="marquee-wrap">
     <div class="marquee">
       <span>Next.js</span><span>·</span><span>TypeScript</span><span>·</span><span>React</span><span>·</span><span>Tailwind</span><span>·</span><span>Web3</span><span>·</span><span>Wagmi</span><span>·</span><span>Viem</span><span>·</span><span>Solana</span><span>·</span>
       <span>Next.js</span><span>·</span><span>TypeScript</span><span>·</span><span>React</span><span>·</span><span>Tailwind</span><span>·</span><span>Web3</span><span>·</span><span>Wagmi</span><span>·</span><span>Viem</span><span>·</span><span>Solana</span><span>·</span>
     </div>
   </div>
-  <div class="marquee-wrap" style="margin-top:16px">
-    <div class="marquee marquee-2">
+  <div class="marquee-wrap" style="margin-top: 12px;">
+    <div class="marquee marquee-reverse">
       <span>Gemini API</span><span>·</span><span>Prompt Engineering</span><span>·</span><span>AI Agents</span><span>·</span><span>Automation</span><span>·</span><span>VPS</span><span>·</span><span>Linux</span><span>·</span><span>GitHub</span><span>·</span><span>Vercel</span><span>·</span>
       <span>Gemini API</span><span>·</span><span>Prompt Engineering</span><span>·</span><span>AI Agents</span><span>·</span><span>Automation</span><span>·</span><span>VPS</span><span>·</span><span>Linux</span><span>·</span><span>GitHub</span><span>·</span><span>Vercel</span><span>·</span>
     </div>
@@ -368,7 +696,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 
 <!-- CONTACT -->
 <section id="contact">
-  <div class="section-label reveal">Get in Touch</div>
+  <div class="section-label reveal" style="text-align:center;">Get in Touch</div>
   <div class="contact-title reveal">Let's Build<br>Something <span class="accent">Together</span></div>
   <div class="contact-links reveal">
     <a href="mailto:kapalapi66100@gmail.com" class="contact-link">Email</a>
@@ -382,22 +710,127 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 
 <script>
 // ═══════════════════════════════════════
-// THREE.JS PARTICLE BACKGROUND
+// LOADER — CINEMATIC COUNTER
+// ═══════════════════════════════════════
+let loadProgress = 0;
+const loaderBar = document.getElementById('loaderBar');
+const loaderCounter = document.getElementById('loaderCounter');
+const loader = document.getElementById('loader');
+
+function animateLoader() {
+  if (loadProgress < 100) {
+    loadProgress += Math.random() * 8 + 2;
+    if (loadProgress > 100) loadProgress = 100;
+    loaderBar.style.width = loadProgress + '%';
+    loaderCounter.textContent = Math.floor(loadProgress) + '%';
+    setTimeout(animateLoader, 60 + Math.random() * 40);
+  } else {
+    setTimeout(() => loader.classList.add('hidden'), 400);
+  }
+}
+window.addEventListener('load', () => setTimeout(animateLoader, 200));
+
+// ═══════════════════════════════════════
+// CUSTOM CURSOR
+// ═══════════════════════════════════════
+const cursor = document.getElementById('cursor');
+const follower = document.getElementById('cursorFollower');
+let cx = 0, cy = 0, fx = 0, fy = 0;
+
+document.addEventListener('mousemove', e => {
+  cx = e.clientX; cy = e.clientY;
+  cursor.style.left = cx + 'px';
+  cursor.style.top = cy + 'px';
+});
+
+function updateFollower() {
+  fx += (cx - fx) * 0.12;
+  fy += (cy - fy) * 0.12;
+  follower.style.left = fx + 'px';
+  follower.style.top = fy + 'px';
+  requestAnimationFrame(updateFollower);
+}
+updateFollower();
+
+// Cursor hover states
+const hoverElements = document.querySelectorAll('a, button, .project-card, .btn-magnetic, .contact-link');
+hoverElements.forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('active'); follower.classList.add('active'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('active'); follower.classList.remove('active'); });
+});
+
+// ═══════════════════════════════════════
+// MAGNETIC BUTTONS
+// ═══════════════════════════════════════
+document.querySelectorAll('.btn-magnetic').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = 'translate(0, 0)';
+  });
+});
+
+// ═══════════════════════════════════════
+// DRAGGABLE PROJECT CAROUSEL
+// ═══════════════════════════════════════
+const track = document.getElementById('projectsTrack');
+let isDragging = false, startX, scrollLeft;
+
+track.addEventListener('mousedown', e => {
+  isDragging = true; startX = e.pageX - track.offsetLeft;
+  scrollLeft = track.scrollLeft; track.style.cursor = 'grabbing';
+});
+track.addEventListener('mouseleave', () => { isDragging = false; track.style.cursor = 'grab'; });
+track.addEventListener('mouseup', () => { isDragging = false; track.style.cursor = 'grab'; });
+track.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  e.preventDefault();
+  const x = e.pageX - track.offsetLeft;
+  track.scrollLeft = scrollLeft - (x - startX) * 1.5;
+});
+
+// Touch support
+let touchStartX = 0, touchScrollLeft = 0;
+track.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].pageX;
+  touchScrollLeft = track.scrollLeft;
+});
+track.addEventListener('touchmove', e => {
+  const x = e.touches[0].pageX;
+  track.scrollLeft = touchScrollLeft - (x - touchStartX);
+});
+
+// ═══════════════════════════════════════
+// SCROLL PROGRESS BAR
+// ═══════════════════════════════════════
+const scrollProgress = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / h) * 100;
+  scrollProgress.style.width = pct + '%';
+});
+
+// ═══════════════════════════════════════
+// THREE.JS — PREMIUM PARTICLE SYSTEM
 // ═══════════════════════════════════════
 const canvas = document.getElementById('three-bg');
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-camera.position.z = 5;
+camera.position.z = 4;
 
-// Particles
-const COUNT = 2000;
+// Particle system
+const COUNT = 3000;
 const geometry = new THREE.BufferGeometry();
 const positions = new Float32Array(COUNT * 3);
 const colors = new Float32Array(COUNT * 3);
-const sizes = new Float32Array(COUNT);
+const velocities = new Float32Array(COUNT * 3);
 
 const palette = [
   [1, 0.42, 0],      // orange
@@ -406,24 +839,25 @@ const palette = [
   [1, 0.176, 0.471],  // pink
 ];
 
-for(let i = 0; i < COUNT; i++){
-  positions[i*3] = (Math.random()-0.5)*20;
-  positions[i*3+1] = (Math.random()-0.5)*20;
-  positions[i*3+2] = (Math.random()-0.5)*20;
-  const c = palette[Math.floor(Math.random()*palette.length)];
+for (let i = 0; i < COUNT; i++) {
+  positions[i*3]   = (Math.random() - 0.5) * 25;
+  positions[i*3+1] = (Math.random() - 0.5) * 25;
+  positions[i*3+2] = (Math.random() - 0.5) * 25;
+  velocities[i*3]   = (Math.random() - 0.5) * 0.002;
+  velocities[i*3+1] = (Math.random() - 0.5) * 0.002;
+  velocities[i*3+2] = (Math.random() - 0.5) * 0.002;
+  const c = palette[Math.floor(Math.random() * palette.length)];
   colors[i*3] = c[0]; colors[i*3+1] = c[1]; colors[i*3+2] = c[2];
-  sizes[i] = Math.random()*2+0.5;
 }
 
 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
 const material = new THREE.PointsMaterial({
-  size: 0.02,
+  size: 0.015,
   vertexColors: true,
   transparent: true,
-  opacity: 0.6,
+  opacity: 0.55,
   blending: THREE.AdditiveBlending,
   sizeAttenuation: true,
 });
@@ -431,39 +865,53 @@ const material = new THREE.PointsMaterial({
 const particles = new THREE.Points(geometry, material);
 scene.add(particles);
 
-// Mouse tracking
-let mouseX = 0, mouseY = 0;
-document.addEventListener('mousemove', (e) => {
-  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+// Mouse
+let mx = 0, my = 0;
+document.addEventListener('mousemove', e => {
+  mx = (e.clientX / window.innerWidth - 0.5) * 2;
+  my = (e.clientY / window.innerHeight - 0.5) * 2;
 });
 
-// Animation loop
-let time = 0;
-function animate(){
+// Scroll-based parallax for particles
+let scrollY = 0;
+window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+// Animation
+let t = 0;
+function animate() {
   requestAnimationFrame(animate);
-  time += 0.001;
-  
-  particles.rotation.y = time * 0.1;
-  particles.rotation.x = time * 0.05;
-  
+  t += 0.0008;
+
+  particles.rotation.y = t * 0.08;
+  particles.rotation.x = t * 0.04;
+
   // Mouse follow
-  camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.02;
-  camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.02;
+  camera.position.x += (mx * 0.6 - camera.position.x) * 0.015;
+  camera.position.y += (-my * 0.6 - camera.position.y) * 0.015;
+
+  // Scroll parallax
+  camera.position.y -= scrollY * 0.0003;
+
   camera.lookAt(scene.position);
-  
-  // Wave effect
+
+  // Organic wave
   const pos = particles.geometry.attributes.position.array;
-  for(let i = 0; i < COUNT; i++){
-    pos[i*3+1] += Math.sin(time * 2 + pos[i*3] * 0.5) * 0.001;
+  for (let i = 0; i < COUNT; i++) {
+    pos[i*3+1] += Math.sin(t * 1.5 + pos[i*3] * 0.3) * 0.0005;
+    pos[i*3]   += velocities[i*3];
+    pos[i*3+1] += velocities[i*3+1];
+    pos[i*3+2] += velocities[i*3+2];
+
+    // Boundary wrap
+    if (Math.abs(pos[i*3]) > 12.5) velocities[i*3] *= -1;
+    if (Math.abs(pos[i*3+1]) > 12.5) velocities[i*3+1] *= -1;
+    if (Math.abs(pos[i*3+2]) > 12.5) velocities[i*3+2] *= -1;
   }
   particles.geometry.attributes.position.needsUpdate = true;
-  
   renderer.render(scene, camera);
 }
 animate();
 
-// Resize
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -471,23 +919,14 @@ window.addEventListener('resize', () => {
 });
 
 // ═══════════════════════════════════════
-// LOADER
-// ═══════════════════════════════════════
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('loader').classList.add('hidden');
-  }, 1500);
-});
-
-// ═══════════════════════════════════════
 // SCROLL REVEAL
 // ═══════════════════════════════════════
 const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
+const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
-    if(entry.isIntersecting) entry.target.classList.add('visible');
+    if (entry.isIntersecting) entry.target.classList.add('visible');
   });
-}, {threshold: 0.1});
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 reveals.forEach(el => observer.observe(el));
 
 // ═══════════════════════════════════════
@@ -497,7 +936,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
     const t = document.querySelector(a.getAttribute('href'));
-    if(t) t.scrollIntoView({behavior:'smooth'});
+    if (t) t.scrollIntoView({ behavior: 'smooth' });
   });
 });
 </script>
