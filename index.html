@@ -473,7 +473,7 @@ tx.fillStyle=gr;
 tx.fillRect(0,0,64,64);
 const tex=new THREE.CanvasTexture(tc);
 
-const N=8000;
+const N=3000;
 const pal=[[1,.843,0],[1,.769,.141],[.854,.647,.125],[1,.922,.533]];
 const pts=[];
 
@@ -483,12 +483,12 @@ for(let i=0;i<N;i++){
     map:tex,
     color:new THREE.Color(c[0],c[1],c[2]),
     transparent:true,
-    opacity:1500,
+    opacity:1.5,
     blending:THREE.AdditiveBlending
   });
   const sp=new THREE.Sprite(mat);
   sp.position.set((Math.random()-.5)*24,(Math.random()-.5)*24,(Math.random()-.5)*24);
-  const s=200+Math.random()*300;
+  const s=0.1+Math.random()*0.15;
   sp.scale.set(s,s,1);
   sp.userData={vx:(Math.random()-.5)*.002,vy:(Math.random()-.5)*.002,vz:(Math.random()-.5)*.002};
   scene.add(sp);
