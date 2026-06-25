@@ -448,7 +448,7 @@ const prog=document.getElementById('progress');
 window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;prog.style.width=(window.scrollY/h)*100+'%'});
 
 // ═══════════════════════════════════════════
-// THREE.JS PARTICLES
+// THREE.JS PARTICLES — GOLD CIRCLES
 // ═══════════════════════════════════════════
 const canvas=document.getElementById('three-bg');
 const scene=new THREE.Scene();
@@ -457,6 +457,23 @@ const ren=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
 ren.setSize(innerWidth,innerHeight);
 ren.setPixelRatio(Math.min(devicePixelRatio,2));
 cam.position.z=4;
+
+// Create circular particle texture FIRST
+const texCanvas=document.createElement('texCanvas');
+texCanvas.width=128;texCanvas.height=128;
+const texCtx=texCanvas.getContext('2d');
+const grad=texCtx.createRadialGradient(64,64,0,64,64,64);
+grad.addColorStop(0,'rgba(255,255,255,1)');
+grad.addColorStop(0.2,'rgba(255,255,255,0.9)');
+grad.addColorStop(0.5,'rgba(255,255,255,0.4)');
+grad.addColorStop(0.8,'rgba(255,255,255,0.1)');
+grad.addColorStop(1,'rgba(255,255,255,0)');
+texCtx.fillStyle=grad;
+texCtx.beginPath();
+texCtx.arc(64,64,64,0,Math.PI*2);
+texCtx.fill();
+const circleTex=new THREE.CanvasTexture(texCanvas);
+
 const N=10000,geo=new THREE.BufferGeometry();
 const p=new Float32Array(N*3),cl=new Float32Array(N*3),vl=new Float32Array(N*3);
 const pal=[[1,.843,0],[1,.769,.141],[.854,.647,.125],[1,.922,.533]];
@@ -467,19 +484,17 @@ for(let i=0;i<N;i++){
 }
 geo.setAttribute('position',new THREE.BufferAttribute(p,3));
 geo.setAttribute('color',new THREE.BufferAttribute(cl,3));
-const mat=new THREE.PointsMaterial({size:.028,vertexColors:true,transparent:true,opacity:.75,blending:THREE.AdditiveBlending,sizeAttenuation:true,map:createCircleTexture()});
 
-function createCircleTexture(){
-  const c=document.createElement('canvas');c.width=64;c.height=64;
-  const ctx=c.getContext('2d');
-  const g=ctx.createRadialGradient(32,32,0,32,32,32);
-  g.addColorStop(0,'rgba(255,255,255,1)');
-  g.addColorStop(0.3,'rgba(255,255,255,0.8)');
-  g.addColorStop(0.7,'rgba(255,255,255,0.3)');
-  g.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=g;ctx.fillRect(0,0,64,64);
-  const tex=new THREE.CanvasTexture(c);return tex;
-}
+const mat=new THREE.PointsMaterial({
+  size:.03,
+  vertexColors:true,
+  transparent:true,
+  opacity:.8,
+  blending:THREE.AdditiveBlending,
+  sizeAttenuation:true,
+  map:circleTex,
+  depthWrite:false
+});
 const pts=new THREE.Points(geo,mat);scene.add(pts);
 let mx=0,my=0,sy=0;
 document.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2});
