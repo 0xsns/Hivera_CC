@@ -448,8 +448,7 @@ const prog=document.getElementById('progress');
 window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;prog.style.width=(window.scrollY/h)*100+'%'});
 
 // ═══════════════════════════════════════════
-// THREE.JS PARTICLES — GOLD CIRCLES
-// ═══════════════════════════════════════════
+// THREE.JS PARTICLES — GOLD (PLAIN)
 const canvas=document.getElementById('three-bg');
 const scene=new THREE.Scene();
 const cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,1000);
@@ -458,13 +457,7 @@ ren.setSize(innerWidth,innerHeight);
 ren.setPixelRatio(Math.min(devicePixelRatio,2));
 cam.position.z=4;
 
-// Create SOLID circle texture
-const _img=new Image();
-_img.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAC3UlEQVR4nO3dSW7jQBBEUcn3v7O8MAjY5amGHBn/7RsoZkQl2dr48QAAAAAAAICEZ/YBIrxer9fuv30+n7ee0e0e7iTsWXcqRfsHiQj8P50L0fLgFUL/TbcytDps5eBHXYrQ4pCdgh9VL0Lpw3UOflS1CCUPdafgR9WKUOowdw5+VKUIb9kHuCiF/3jUed70FlYZRKbMbZC6AQj/Q+Yc0gpA+F9lzSN89RD8/yJfCaEbgPDnRM4prACEvyZqXiEFIPw9EXNzLwDhn/Gen2sBCN+G5xzdCkD4trzmWeanYORwKQC334fHXM0LQPi+rOdrWgDCj2E5Z74BxJkVgNsfy2reJgUg/BwWc+cVIO64ANz+XKfzZwOIOyoAt7+GkxzYAOK2C8Dtr2U3DzaAuK0CcPtr2smFDSBuuQDc/tpW82EDiKMA4pYKwPrvYSUnNoA4CiCOAoibLgDv/15m82IDiKMA4iiAOAogbqoAfAD2NJMbG0AcBRBHAcRRAHEUQBwFEEcBxFEAcRRAHAUQRwHEUQBxFEAcBRA3VYAqf+IMa2ZyYwOIowDiKIA4CiBuugB8CPYymxcbQBwFEEcBxC0VgO+AHlZyYgOIowDilgvAa6C21XzYAOK2CsAWqGknFzaAuO0CsAVq2c2DDSDuqABsgRpOcmADiDsuAFsg1+n82QDiTArAFshhMXezDUAJYlnNm1eAONMCsAViWM7ZfANQAl/W83V5BVACHx5z5RtAnFsB2AK2vObpugEogQ3PObq/AijBGe/5hXwDUII9EXML+wikBGui5hX6vwBKMCdyTmmB8FdIvsu4IGm/A7ANvsqaR+oPQZTgQ+YcygSg+EqocAHK/BRcYRiRqjxviUOM7rwNqgR/KXWY0Z2KUC34S8lDjToXoWrwl9KHG3UqQvXgLy0OOapchC7BX1od9icVytAt9M/aHvw3EYXoHPjoNg/yl5NS3ClsAAAAAACg7R2u5QTZjZRqDgAAAABJRU5ErkJggg==';
-const circleTex=new THREE.Texture(_img);
-circleTex.needsUpdate=true;
-
-const N=15000,geo=new THREE.BufferGeometry();
+const N=8000,geo=new THREE.BufferGeometry();
 const p=new Float32Array(N*3),cl=new Float32Array(N*3),vl=new Float32Array(N*3);
 const pal=[[1,.843,0],[1,.769,.141],[.854,.647,.125],[1,.922,.533]];
 for(let i=0;i<N;i++){
@@ -476,27 +469,34 @@ geo.setAttribute('position',new THREE.BufferAttribute(p,3));
 geo.setAttribute('color',new THREE.BufferAttribute(cl,3));
 
 const mat=new THREE.PointsMaterial({
-  size:20,
+  size:0.12,
   vertexColors:true,
   transparent:true,
-  opacity:5.0,
+  opacity:1.0,
   blending:THREE.AdditiveBlending,
-  sizeAttenuation:false,
-  map:circleTex,
-  depthWrite:false
+  sizeAttenuation:false
 });
 const pts=new THREE.Points(geo,mat);scene.add(pts);
+
 let mx=0,my=0,sy=0;
 document.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2});
 window.addEventListener('scroll',()=>sy=window.scrollY);
 let t=0;
-(function anim(){requestAnimationFrame(anim);t+=.0008;pts.rotation.y=t*.08;pts.rotation.x=t*.04;
-cam.position.x+=(mx*.5-cam.position.x)*.015;cam.position.y+=(-my*.5-cam.position.y)*.015-sy*.0003;cam.lookAt(scene.position);
+(function anim(){requestAnimationFrame(anim);t+=.0008;
+cam.position.x+=(mx*.5-cam.position.x)*.015;
+cam.position.y+=(-my*.5-cam.position.y)*.015-sy*.0003;
+cam.lookAt(scene.position);
 const pp=pts.geometry.attributes.position.array;
-for(let i=0;i<N;i++){pp[i*3+1]+=Math.sin(t*1.5+pp[i*3]*.3)*.0004;pp[i*3]+=vl[i*3];pp[i*3+1]+=vl[i*3+1];pp[i*3+2]+=vl[i*3+2];
-if(Math.abs(pp[i*3])>12)vl[i*3]*=-1;if(Math.abs(pp[i*3+1])>12)vl[i*3+1]*=-1;if(Math.abs(pp[i*3+2])>12)vl[i*3+2]*=-1;}
+for(let i=0;i<N;i++){
+  pp[i*3+1]+=Math.sin(t*1.5+pp[i*3]*.3)*.0004;
+  pp[i*3]+=vl[i*3];pp[i*3+1]+=vl[i*3+1];pp[i*3+2]+=vl[i*3+2];
+  if(Math.abs(pp[i*3])>12)vl[i*3]*=-1;
+  if(Math.abs(pp[i*3+1])>12)vl[i*3+1]*=-1;
+  if(Math.abs(pp[i*3+2])>12)vl[i*3+2]*=-1;
+}
 pts.geometry.attributes.position.needsUpdate=true;ren.render(scene,cam)})();
 window.addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();ren.setSize(innerWidth,innerHeight)});
+
 
 // SMOOTH SCROLL NAV
 document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'})})});
