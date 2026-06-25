@@ -19,12 +19,12 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 /* ═══════════════════════════════════════
    LOADER
    ═══════════════════════════════════════ */
-#loader{position:fixed;inset:0;background:#000;z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px}
-#loader.done{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .8s var(--ease),visibility .8s}
-.loader-counter{font-size:clamp(48px,10vw,96px);font-weight:700;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-2px}
-.loader-bar{width:120px;height:1px;background:#1a1a1a;position:relative;overflow:hidden}
-.loader-bar::after{content:'';position:absolute;left:0;top:0;height:100%;width:0;background:var(--accent);transition:width .2s}
-#loader.done .loader-bar::after{width:100%}
+#loader{position:fixed;inset:0;background:#000;z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 1.2s var(--ease),visibility 1.2s}
+#blackhole-canvas{position:absolute;inset:0;width:100%;height:100%}
+.loader-text-overlay{position:relative;z-index:2;text-align:center}
+.loader-counter{font-size:clamp(36px,8vw,72px);font-weight:700;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-2px;text-shadow:0 0 30px rgba(255,165,0,.5),0 0 60px rgba(255,107,0,.3)}
+.loader-sub{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:12px}
 
 /* ═══════════════════════════════════════
    PROGRESS BAR
@@ -189,7 +189,13 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 <body>
 
 <div class="progress" id="progress"></div>
-<div id="loader"><div class="loader-counter" id="loaderNum">0</div><div class="loader-bar"></div></div>
+<div id="loader">
+  <canvas id="blackhole-canvas"></canvas>
+  <div class="loader-text-overlay" id="loaderOverlay">
+    <div class="loader-counter" id="loaderNum">0</div>
+    <div class="loader-sub">Loading Experience</div>
+  </div>
+</div>
 <div class="cursor-dot" id="cDot"></div>
 <div class="cursor-ring" id="cRing"></div>
 <canvas id="three-bg"></canvas>
@@ -320,6 +326,148 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 
 <script>
 // ═══════════════════════════════════════════
+// BLACK HOLE LOADER
+// ═══════════════════════════════════════════
+(function(){
+  const canvas=document.getElementById('blackhole-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  let W,H;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+  resize();
+  window.addEventListener('resize',resize);
+  
+  const cx=()=>W/2, cy=()=>H/2;
+  const particles=[];
+  const COUNT=800;
+  const accretion=[];
+  const ACC_COUNT=200;
+  
+  // Create infalling particles
+  for(let i=0;i<COUNT;i++){
+    const angle=Math.random()*Math.PI*2;
+    const dist=150+Math.random()*Math.max(W,H)*0.6;
+    particles.push({
+      x:cx()+Math.cos(angle)*dist,
+      y:cy()+Math.sin(angle)*dist,
+      ox:0,oy:0,
+      angle:angle,
+      speed:0.3+Math.random()*0.8,
+      size:0.5+Math.random()*1.5,
+      alpha:0.3+Math.random()*0.7,
+      color:Math.random()>0.5?[1,0.65,0]:[1,0.4,0]
+    });
+  }
+  
+  // Create accretion disk
+  for(let i=0;i<ACC_COUNT;i++){
+    const angle=Math.random()*Math.PI*2;
+    const dist=30+Math.random()*80;
+    accretion.push({
+      angle:angle,
+      dist:dist,
+      speed:0.02+Math.random()*0.03,
+      size:1+Math.random()*2,
+      alpha:0.4+Math.random()*0.6,
+      hue:30+Math.random()*20
+    });
+  }
+  
+  let t=0;
+  let progress=0;
+  
+  function drawBlackHole(){
+    ctx.fillStyle='rgba(0,0,0,0.15)';
+    ctx.fillRect(0,0,W,H);
+    
+    const centerX=cx(), centerY=cy();
+    const blackHoleRadius=40;
+    
+    // Glow
+    const glow=ctx.createRadialGradient(centerX,centerY,blackHoleRadius*0.5,centerX,centerY,blackHoleRadius*4);
+    glow.addColorStop(0,'rgba(255,107,0,0.15)');
+    glow.addColorStop(0.3,'rgba(255,165,0,0.05)');
+    glow.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=glow;
+    ctx.fillRect(0,0,W,H);
+    
+    // Accretion disk
+    ctx.save();
+    ctx.translate(centerX,centerY);
+    for(const a of accretion){
+      a.angle+=a.speed;
+      const x=Math.cos(a.angle)*a.dist;
+      const y=Math.sin(a.angle)*a.dist*0.3;
+      const pulse=0.7+Math.sin(t*3+a.angle)*0.3;
+      ctx.fillStyle=`hsla(${a.hue},100%,60%,${a.alpha*pulse*0.6})`;
+      ctx.beginPath();
+      ctx.arc(x,y,a.size*pulse,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+    
+    // Infalling particles
+    for(const p of particles){
+      const dx=centerX-p.x;
+      const dy=centerY-p.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      
+      // Spiral inward
+      p.angle+=0.02*(100/Math.max(dist,50));
+      const pull=p.speed*(200/Math.max(dist,30));
+      p.x+=Math.cos(p.angle)*pull*0.3+dx/dist*pull;
+      p.y+=Math.sin(p.angle)*pull*0.3+dy/dist*pull;
+      
+      // Reset if too close
+      if(dist<blackHoleRadius*0.8){
+        const resetAngle=Math.random()*Math.PI*2;
+        const resetDist=150+Math.random()*Math.max(W,H)*0.5;
+        p.x=centerX+Math.cos(resetAngle)*resetDist;
+        p.y=centerY+Math.sin(resetAngle)*resetDist;
+        p.angle=resetAngle;
+      }
+      
+      // Draw
+      const fade=dist<200?dist/200:1;
+      ctx.fillStyle=`rgba(${Math.floor(p.color[0]*255)},${Math.floor(p.color[1]*255)},${Math.floor(p.color[2]*255)},${p.alpha*fade})`;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fill();
+    }
+    
+    // Black center
+    const blackGrad=ctx.createRadialGradient(centerX,centerY,0,centerX,centerY,blackHoleRadius);
+    blackGrad.addColorStop(0,'rgba(0,0,0,1)');
+    blackGrad.addColorStop(0.7,'rgba(0,0,0,1)');
+    blackGrad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=blackGrad;
+    ctx.beginPath();
+    ctx.arc(centerX,centerY,blackHoleRadius,0,Math.PI*2);
+    ctx.fill();
+    
+    // Event horizon ring
+    ctx.strokeStyle=`rgba(255,140,0,${0.3+Math.sin(t*2)*0.2})`;
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.arc(centerX,centerY,blackHoleRadius+5,0,Math.PI*2);
+    ctx.stroke();
+    
+    t+=0.016;
+  }
+  
+  // Animation loop
+  function animate(){
+    if(progress>=100)return;
+    drawBlackHole();
+    requestAnimationFrame(animate);
+  }
+  animate();
+  
+  // Export for loader to use
+  window._blackHole={updateProgress:function(p){progress=p}};
+})();
+
+// ═══════════════════════════════════════════
 // LOADER
 // ═══════════════════════════════════════════
 let loadVal=0;
@@ -329,7 +477,7 @@ function tickLoader(){
   if(loadVal<100){
     loadVal+=Math.random()*12+3;
     if(loadVal>100)loadVal=100;
-    loadEl.textContent=Math.floor(loadVal);
+    loadEl.textContent=Math.floor(loadVal);if(window._blackHole)window._blackHole.updateProgress(loadVal);
     setTimeout(tickLoader,40+Math.random()*30);
   }else{
     loadEl.textContent='100';
