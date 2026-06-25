@@ -476,10 +476,10 @@ geo.setAttribute('position',new THREE.BufferAttribute(p,3));
 geo.setAttribute('color',new THREE.BufferAttribute(cl,3));
 
 const mat=new THREE.PointsMaterial({
-  size:.03,
+  size:.05,
   vertexColors:true,
   transparent:true,
-  opacity:.8,
+  opacity:1.0,
   blending:THREE.AdditiveBlending,
   sizeAttenuation:true,
   map:circleTex,
