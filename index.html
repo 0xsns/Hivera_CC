@@ -16,6 +16,7 @@ html{scroll-behavior:auto;scrollbar-width:none}html::-webkit-scrollbar{display:n
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 ::selection{background:var(--accent);color:#000}
 
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 /* ═══════════════════════════════════════
    LOADER
    ═══════════════════════════════════════ */
@@ -64,10 +65,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
    HERO — FULLSCREEN
    ═══════════════════════════════════════ */
 #hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 8vw}
-.hero-eyebrow{font-size:11px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-bottom:28px;overflow:hidden}
+.hero-eyebrow{font-size:11px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-bottom:28px;overflow:hidden;opacity:0;transform:translateY(20px);animation:fadeUp .8s ease forwards .3s}
 .hero-eyebrow .char{display:inline-block}
 .hero-title{font-size:clamp(48px,10vw,130px);font-weight:700;line-height:.92;letter-spacing:-4px}
-.hero-title .line{display:block;overflow:hidden;padding-bottom:8px}
+.hero-title .line{display:block;overflow:hidden;padding-bottom:8px;opacity:0;transform:translateY(30px);animation:fadeUp .8s ease forwards .5s}
+.hero-title .line:nth-child(2){animation-delay:.7s}
+.hero-title .line:nth-child(3){animation-delay:.9s}
 .hero-title .line .char{display:inline-block}
 .hero-title .accent{color:var(--accent)}
 .hero-title .accent2{color:var(--accent2)}
@@ -80,7 +83,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
 .btn-primary:hover{background:#fff;border-color:#fff}
 .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.15)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.hero-scroll{position:absolute;bottom:40px;left:8vw;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px;overflow:hidden}
+.hero-scroll{position:absolute;bottom:40px;left:8vw;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px;overflow:hidden;opacity:0;animation:fadeUp .6s ease forwards 1.5s}
 .hero-scroll .char{display:inline-block}
 .hero-scroll-line{width:1px;height:40px;background:var(--muted);transform:scaleY(0);transform-origin:top}
 
