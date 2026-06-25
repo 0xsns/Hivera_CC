@@ -459,7 +459,7 @@ ren.setPixelRatio(Math.min(devicePixelRatio,2));
 cam.position.z=4;
 
 // Create circular particle texture FIRST
-const texCanvas=document.createElement('texCanvas');
+const texCanvas=document.createElement('canvas');
 texCanvas.width=128;texCanvas.height=128;
 const texCtx=texCanvas.getContext('2d');
 const grad=texCtx.createRadialGradient(64,64,0,64,64,64);
