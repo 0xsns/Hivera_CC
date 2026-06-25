@@ -220,7 +220,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 <body>
 
 <div class="progress" id="progress"></div>
-<div id="loader"><div class="loader-counter" id="loaderNum">0</div><div class="loader-bar"></div></div>
+<div id="loader"><div class="loader-sparkles"></div></div>
 <div class="cursor-dot" id="cDot"></div>
 <div class="cursor-ring" id="cRing"></div>
 <div id="bg-texture">
@@ -602,10 +602,10 @@ function tickLoader(){
   if(loadVal<100){
     loadVal+=Math.random()*12+3;
     if(loadVal>100)loadVal=100;
-    loadEl.textContent=Math.floor(loadVal);
+    
     setTimeout(tickLoader,40+Math.random()*30);
   }else{
-    loadEl.textContent='100';
+    
     setTimeout(()=>{loader.classList.add('done');heroReveal()},400);
   }
 }
