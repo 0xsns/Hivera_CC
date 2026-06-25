@@ -566,9 +566,9 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 <!-- CONTACT -->
 <section id="contact">
   <div class="section-label" style="text-align:center"><span class="char">Get in Touch</span></div>
-  <div class="contact-title"><span class="line"><span class="char">Let's Build</span></span><span class="line"><span class="char">Something </span><span class="char accent">Together</span></span></div>
+  <div class="contact-title"><span class="line"><span class="char">Contact </span><span class="char accent">Me</span></span></div>
   <p class="contact-sub" style="text-align:center;color:#999;font-size:15px;margin-bottom:48px;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto">Have a project in mind? Want to collaborate? Or just want to say hi? Feel free to reach out through any of these platforms.</p>
-  <div style="text-align:center;margin-bottom:28px"><span style="font-size:16px;letter-spacing:6px;text-transform:uppercase;color:#fff;font-weight:600">Contact Me</span></div>
+  
   <div class="contact-links">
     <a href="mailto:kapalapi66100@gmail.com" class="contact-link">
       <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="#EA4335" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
@@ -654,7 +654,7 @@ function heroReveal(){
 // SCROLL-LINKED SECTION REVEALS
 // ═══════════════════════════════════════════
 function splitReveal(container){
-  container.querySelectorAll('.section-label .char,.section-title .char').forEach((c,i)=>{
+  container.querySelectorAll('.section-label .char,.section-title .char,.contact-title .char').forEach((c,i)=>{
     setTimeout(()=>{c.style.transition='transform .7s var(--ease),opacity .7s var(--ease)';c.style.opacity='1';c.style.transform='translateY(0)'},i*35);
   });
 }
