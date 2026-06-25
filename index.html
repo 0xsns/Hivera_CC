@@ -440,7 +440,7 @@ const ren=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
 ren.setSize(innerWidth,innerHeight);
 ren.setPixelRatio(Math.min(devicePixelRatio,2));
 cam.position.z=4;
-const N=5500,geo=new THREE.BufferGeometry();
+const N=10000,geo=new THREE.BufferGeometry();
 const p=new Float32Array(N*3),cl=new Float32Array(N*3),vl=new Float32Array(N*3);
 const pal=[[1,.843,0],[1,.769,.141],[.854,.647,.125],[1,.922,.533]];
 for(let i=0;i<N;i++){
