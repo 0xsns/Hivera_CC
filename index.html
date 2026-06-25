@@ -10,76 +10,95 @@
 <style>
 :root{--bg:#000;--text:#fff;--accent:#ff6b00;--accent2:#8b3fff;--muted:#555;--ease:cubic-bezier(.16,1,.3,1)}
 *{margin:0;padding:0;box-sizing:border-box}
-html{scrollbar-width:none}html::-webkit-scrollbar{display:none}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden}
+html{scroll-behavior:auto;scrollbar-width:none}html::-webkit-scrollbar{display:none}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 ::selection{background:var(--accent);color:#000}
 
-/* LOADER */
-#loader{position:fixed;inset:0;background:#000;z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 1s var(--ease),visibility 1s}
-#loader.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.loader-text{font-size:10px;letter-spacing:8px;text-transform:uppercase;color:var(--muted)}
-.loader-bar-wrap{width:200px;height:1px;background:#1a1a1a;margin-top:24px;position:relative}
-.loader-bar{height:100%;background:var(--accent);width:0%;transition:width .3s}
-.loader-counter{font-size:11px;letter-spacing:4px;color:#333;margin-top:10px;font-variant-numeric:tabular-nums}
+/* ═══════════════════════════════════════
+   LOADER
+   ═══════════════════════════════════════ */
+#loader{position:fixed;inset:0;background:#000;z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .8s var(--ease),visibility .8s}
+.loader-counter{font-size:clamp(48px,10vw,96px);font-weight:700;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-2px}
+.loader-bar{width:120px;height:1px;background:#1a1a1a;position:relative;overflow:hidden}
+.loader-bar::after{content:'';position:absolute;left:0;top:0;height:100%;width:0;background:var(--accent);transition:width .2s}
+#loader.done .loader-bar::after{width:100%}
 
-/* SCROLL PROGRESS */
-.scroll-progress{position:fixed;top:0;left:0;width:0%;height:2px;background:var(--accent);z-index:9999;transition:width .1s}
+/* ═══════════════════════════════════════
+   PROGRESS BAR
+   ═══════════════════════════════════════ */
+.progress{position:fixed;top:0;left:0;height:2px;background:var(--accent);z-index:9999;width:0%;transition:width .05s linear}
 
-/* THREE BG */
-#three-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+/* ═══════════════════════════════════════
+   CUSTOM CURSOR
+   ═══════════════════════════════════════ */
+.cursor-dot{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:10001;mix-blend-mode:difference;transform:translate(-50%,-50%);transition:width .3s var(--ease),height .3s var(--ease),opacity .3s}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1px solid rgba(255,255,255,.2);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:width .5s var(--ease),height .5s var(--ease),border-color .3s}
+.cursor-dot.hover{width:60px;height:60px;opacity:.4}
+.cursor-ring.hover{width:80px;height:80px;border-color:var(--accent)}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:24px 40px;display:flex;align-items:center;justify-content:space-between;mix-blend-mode:difference}
+/* ═══════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════ */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:flex;align-items:center;justify-content:space-between;mix-blend-mode:difference}
 .nav-logo{font-size:13px;letter-spacing:5px;text-transform:uppercase;font-weight:700;text-decoration:none;color:#fff}
 .nav-links{display:flex;gap:36px;list-style:none}
-.nav-links a{color:#fff;text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.35;transition:opacity .4s}
+.nav-links a{color:#fff;text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.35;transition:opacity .4s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .4s var(--ease)}
 .nav-links a:hover{opacity:1}
-.nav-hamburger{display:none;background:none;border:none;color:#fff;cursor:pointer;padding:8px}
+.nav-links a:hover::after{width:100%}
+.hamburger{display:none;background:none;border:1px solid rgba(255,255,255,.2);color:#fff;padding:10px 16px;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:inherit}
 
-/* HERO */
+/* ═══════════════════════════════════════
+   THREE BG
+   ═══════════════════════════════════════ */
+#three-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* ═══════════════════════════════════════
+   HERO — FULLSCREEN
+   ═══════════════════════════════════════ */
 #hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 8vw}
 .hero-eyebrow{font-size:10px;letter-spacing:8px;text-transform:uppercase;color:var(--muted);margin-bottom:28px;overflow:hidden}
-.hero-eyebrow span{display:inline-block;transform:translateY(120%);animation:textReveal .8s var(--ease) 1.8s forwards}
+.hero-eyebrow .char{display:inline-block;opacity:0;transform:translateY(100%)}
 .hero-title{font-size:clamp(48px,10vw,130px);font-weight:700;line-height:.92;letter-spacing:-4px}
-.hero-title .line{display:block;overflow:hidden}
-.hero-title .line span{display:inline-block;transform:translateY(110%);animation:textReveal 1s var(--ease) forwards}
-.hero-title .line:nth-child(1) span{animation-delay:2s}
-.hero-title .line:nth-child(2) span{animation-delay:2.15s}
-.hero-title .line:nth-child(3) span{animation-delay:2.3s}
+.hero-title .line{display:block;overflow:hidden;padding-bottom:8px}
+.hero-title .line .char{display:inline-block;opacity:0;transform:translateY(110%)}
 .hero-title .accent{color:var(--accent)}
 .hero-title .accent2{color:var(--accent2)}
-@keyframes textReveal{to{transform:translateY(0)}}
-.hero-sub{max-width:480px;margin-top:40px;font-size:15px;line-height:1.8;color:var(--muted);font-weight:300;opacity:0;transform:translateY(20px);animation:fadeUp .8s var(--ease) 2.6s forwards}
-@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-.hero-cta{margin-top:40px;display:flex;gap:16px;opacity:0;animation:fadeUp .6s var(--ease) 2.8s forwards}
-.btn-magnetic{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;border-radius:100px;font-family:inherit;font-weight:500;transition:all .4s var(--ease)}
+.hero-sub{max-width:480px;margin-top:40px;font-size:15px;line-height:1.8;color:var(--muted);font-weight:300;overflow:hidden}
+.hero-sub .char{display:inline-block;opacity:0;transform:translateY(100%)}
+.hero-cta{margin-top:40px;display:flex;gap:16px;overflow:hidden}
+.hero-cta .btn-wrap{overflow:hidden}
+.btn-magnetic{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;border-radius:100px;font-family:inherit;font-weight:500;transition:all .4s var(--ease);transform:translateY(110%)}
 .btn-primary{background:var(--accent);color:#000;border:1px solid var(--accent)}
 .btn-primary:hover{background:#fff;border-color:#fff}
 .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.15)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.hero-scroll{position:absolute;bottom:40px;left:8vw;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px;opacity:0;animation:fadeUp .6s var(--ease) 3s forwards}
-.hero-scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--muted),transparent);animation:scrollPulse 2.5s ease infinite}
-@keyframes scrollPulse{0%,100%{opacity:1;transform:scaleY(1)}50%{opacity:.3;transform:scaleY(.5)}}
+.hero-scroll{position:absolute;bottom:40px;left:8vw;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px;overflow:hidden}
+.hero-scroll .char{display:inline-block;opacity:0;transform:translateY(100%)}
+.hero-scroll-line{width:1px;height:40px;background:var(--muted);transform:scaleY(0);transform-origin:top}
 
-/* SECTIONS */
-.section{position:relative;z-index:1;padding:120px 8vw}
-.section-label{font-size:10px;letter-spacing:8px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-.section-title{font-size:clamp(32px,5vw,60px);font-weight:700;line-height:1.05;letter-spacing:-2px}
+/* ═══════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════ */
+.section{position:relative;z-index:1;padding:140px 8vw}
+.section-label{font-size:10px;letter-spacing:8px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;overflow:hidden}
+.section-label .char{display:inline-block;opacity:0;transform:translateY(100%)}
+.section-title{font-size:clamp(32px,5vw,60px);font-weight:700;line-height:1.05;letter-spacing:-2px;overflow:hidden}
+.section-title .char{display:inline-block;opacity:0;transform:translateY(110%)}
 .section-title .accent{color:var(--accent)}
 
-/* PROJECTS */
-#projects{padding:120px 0 120px 8vw;overflow:hidden}
-#projects .section-label,#projects .section-title{padding-right:8vw}
-.projects-wrapper{margin-top:56px}
-.projects-track{display:flex;gap:28px;padding-bottom:32px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;cursor:grab}
-.projects-track:active{cursor:grabbing}
-.projects-track::-webkit-scrollbar{display:none}
-.project-card{min-width:380px;max-width:380px;scroll-snap-align:start;background:#0a0a0a;border-radius:16px;overflow:hidden;border:1px solid #151515;transition:transform .6s var(--ease),border-color .4s;flex-shrink:0}
-.project-card:hover{transform:translateY(-6px);border-color:rgba(255,107,0,.3)}
-.project-card-media{height:220px;background:#111;position:relative;overflow:hidden}
-.project-card-media .gradient{position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--accent2));opacity:0;transition:opacity .8s var(--ease)}
+/* ═══════════════════════════════════════
+   PROJECTS — HORIZONTAL SCROLL SECTION
+   ═══════════════════════════════════════ */
+#projects{padding:140px 0 140px 8vw;overflow:hidden}
+.projects-track{display:flex;gap:28px;margin-top:56px;will-change:transform}
+.project-card{min-width:min(420px,80vw);background:#0a0a0a;border-radius:16px;overflow:hidden;border:1px solid #151515;flex-shrink:0;opacity:0;transform:translateY(60px) scale(.95)}
+.project-card.in-view{opacity:1;transform:translateY(0) scale(1);transition:all .8s var(--ease)}
+.project-card-media{height:240px;background:#111;position:relative;overflow:hidden}
+.project-card-media .gradient{position:absolute;inset:0;opacity:0;transition:opacity .6s var(--ease)}
 .project-card:hover .gradient{opacity:.7}
-.project-card-media .icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;color:rgba(255,255,255,.06);transition:all .8s var(--ease)}
+.project-card-media .icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;color:rgba(255,255,255,.06);transition:all .6s var(--ease)}
 .project-card:hover .icon{transform:scale(1.3);color:rgba(255,255,255,.2)}
 .project-card-body{padding:24px 28px}
 .project-card-tag{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
@@ -87,84 +106,87 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:24px 40px;display:f
 .project-card-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
 .project-card-tech{display:flex;flex-wrap:wrap;gap:6px}
 .tech-pill{font-size:9px;padding:4px 10px;border-radius:100px;background:rgba(255,255,255,.03);color:var(--muted);border:1px solid #1a1a1a}
-.drag-hint{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#333;margin-top:20px;display:flex;align-items:center;gap:12px}
-.drag-hint::after{content:'';width:30px;height:1px;background:#333}
 
-/* SERVICES */
-#services{padding:120px 8vw}
+/* ═══════════════════════════════════════
+   SERVICES — STAGGER IN
+   ═══════════════════════════════════════ */
+#services{padding:140px 8vw}
 .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
-.service-card{background:rgba(255,255,255,.015);border:1px solid #111;border-radius:16px;padding:36px 28px;transition:all .5s var(--ease)}
-.service-card:hover{border-color:rgba(255,107,0,.2);background:rgba(255,107,0,.02);transform:translateY(-4px)}
+.service-card{background:rgba(255,255,255,.015);border:1px solid #111;border-radius:16px;padding:36px 28px;opacity:0;transform:translateY(40px);transition:all .7s var(--ease),transform .5s var(--ease),border-color .4s,background .4s}
+.service-card.in-view{opacity:1;transform:translateY(0)}
+.service-card:hover{border-color:rgba(255,107,0,.2);background:rgba(255,107,0,.02);transform:translateY(-4px)!important}
 .service-num{font-size:48px;font-weight:700;color:#151515;transition:color .5s;line-height:1}
 .service-card:hover .service-num{color:var(--accent)}
 .service-name{font-size:15px;font-weight:600;margin:16px 0 8px}
 .service-desc{font-size:12px;color:var(--muted);line-height:1.7}
 
-/* SKILLS MARQUEE */
+/* ═══════════════════════════════════════
+   SKILLS — MARQUEE
+   ═══════════════════════════════════════ */
 #skills{padding:100px 0;overflow:hidden}
 .marquee-wrap{margin-top:48px;overflow:hidden;white-space:nowrap}
-.marquee{display:inline-flex;animation:marqueeScroll 35s linear infinite;gap:20px}
+.marquee{display:inline-flex;animation:marqueeScroll 40s linear infinite;gap:20px}
 .marquee span{font-size:clamp(36px,6vw,72px);font-weight:700;color:#0d0d0d;letter-spacing:-2px;user-select:none}
 @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.marquee-reverse{animation-direction:reverse;animation-duration:28s}
-.marquee-reverse span{color:#080808}
+.marquee-rev{animation-direction:reverse;animation-duration:32s}
+.marquee-rev span{color:#080808}
 
-/* EXPERIENCE */
-#experience{padding:120px 8vw}
+/* ═══════════════════════════════════════
+   EXPERIENCE
+   ═══════════════════════════════════════ */
+#experience{padding:140px 8vw}
 .timeline{margin-top:56px;position:relative}
 .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,#1a1a1a,transparent)}
-.timeline-item{padding-left:40px;padding-bottom:48px;position:relative}
-.timeline-item::before{content:'';position:absolute;left:-4px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 12px rgba(255,107,0,.3)}
-.timeline-year{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-.timeline-title{font-size:18px;font-weight:600;margin-bottom:4px}
-.timeline-org{font-size:12px;color:var(--accent2);margin-bottom:10px}
-.timeline-desc{font-size:12px;color:var(--muted);line-height:1.7;max-width:420px}
+.tl-item{padding-left:40px;padding-bottom:48px;position:relative;opacity:0;transform:translateX(-30px);transition:all .7s var(--ease)}
+.tl-item.in-view{opacity:1;transform:translateX(0)}
+.tl-item::before{content:'';position:absolute;left:-4px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 12px rgba(255,107,0,.3)}
+.tl-year{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.tl-title{font-size:18px;font-weight:600;margin-bottom:4px}
+.tl-org{font-size:12px;color:var(--accent2);margin-bottom:10px}
+.tl-desc{font-size:12px;color:var(--muted);line-height:1.7;max-width:420px}
 
-/* CONTACT */
-#contact{padding:140px 8vw;text-align:center}
-.contact-title{font-size:clamp(36px,7vw,80px);font-weight:700;letter-spacing:-3px;line-height:.95;margin-bottom:48px}
+/* ═══════════════════════════════════════
+   CONTACT
+   ═══════════════════════════════════════ */
+#contact{padding:160px 8vw;text-align:center}
+.contact-title{font-size:clamp(36px,7vw,80px);font-weight:700;letter-spacing:-3px;line-height:.95;margin-bottom:48px;overflow:hidden}
+.contact-title .line{display:block;overflow:hidden}
+.contact-title .char{display:inline-block;opacity:0;transform:translateY(110%)}
 .contact-title .accent{color:var(--accent)}
 .contact-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
-.contact-link{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:14px 36px;border:1px solid #1a1a1a;border-radius:100px;transition:all .4s var(--ease)}
-.contact-link:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
+.contact-link{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:14px 36px;border:1px solid #1a1a1a;border-radius:100px;transition:all .4s var(--ease);opacity:0;transform:translateY(20px)}
+.contact-link.in-view{opacity:1;transform:translateY(0);transition:opacity .6s var(--ease),transform .6s var(--ease),color .4s,border-color .4s}
+.contact-link:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px)!important}
 
-/* FOOTER */
 footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:10px;color:#222;letter-spacing:3px;text-transform:uppercase;border-top:1px solid #0a0a0a}
 
-/* REVEAL */
-.reveal{opacity:0;transform:translateY(50px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-d1{transition-delay:.1s}
-.reveal-d2{transition-delay:.2s}
-
-/* ═══ MOBILE ═══ */
+/* ═══════════════════════════════════════
+   MOBILE
+   ═══════════════════════════════════════ */
 @media(max-width:768px){
   nav{padding:16px 20px}
   .nav-links{display:none}
-  .nav-hamburger{display:block}
-  #hero{padding:120px 24px 80px;min-height:100vh}
+  .hamburger{display:block}
+  #hero{padding:120px 24px 80px}
   .hero-title{letter-spacing:-2px}
   .section{padding:80px 24px}
   #projects{padding:80px 0 80px 24px}
-  .project-card{min-width:300px;max-width:300px}
   .services-grid{grid-template-columns:1fr}
   .hero-cta{flex-direction:column}
   .btn-magnetic{width:100%;justify-content:center}
   .contact-links{flex-direction:column;align-items:center}
   .contact-link{width:100%;max-width:260px;text-align:center}
   .hero-scroll{display:none}
+  .cursor-dot,.cursor-ring{display:none!important}
 }
 </style>
 </head>
 <body>
 
-<div class="scroll-progress" id="scrollProgress"></div>
-<div id="loader">
-  <div class="loader-text">Loading</div>
-  <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
-  <div class="loader-counter" id="loaderCounter">0%</div>
-</div>
-
+<div class="progress" id="progress"></div>
+<div id="loader"><div class="loader-counter" id="loaderNum">0</div><div class="loader-bar"></div></div>
+<div class="cursor-dot" id="cDot"></div>
+<div class="cursor-ring" id="cRing"></div>
 <canvas id="three-bg"></canvas>
 
 <nav>
@@ -176,152 +198,99 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
     <li><a href="#experience">Journey</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <button class="nav-hamburger" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'">
-    <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M0 0h20v2H0zM0 6h20v2H0zM0 12h20v2H0z" fill="white"/></svg>
-  </button>
+  <button class="hamburger" onclick="this.previousElementSibling.style.display=this.previousElementSibling.style.display==='flex'?'none':'flex'">Menu</button>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-eyebrow"><span>Web3 · AI · Builder</span></div>
+  <div class="hero-eyebrow"><span class="char">Web3 · AI · Builder</span></div>
   <h1 class="hero-title">
-    <span class="line"><span>Hivera</span></span>
-    <span class="line"><span>Builds <span class="accent">AI</span></span></span>
-    <span class="line"><span>& <span class="accent2">Web3</span></span></span>
+    <span class="line"><span class="char">Hivera</span></span>
+    <span class="line"><span class="char">Builds </span><span class="char accent">AI</span></span>
+    <span class="line"><span class="char">& </span><span class="char accent2">Web3</span><span class="char"> Products</span></span>
   </h1>
-  <p class="hero-sub">Building practical blockchain dashboards, AI agents, and digital products. Focused on real utility, clean execution, and shipping fast.</p>
+  <p class="hero-sub"><span class="char">Building practical blockchain dashboards, AI agents, and digital products. Focused on real utility, clean execution, and shipping fast.</span></p>
   <div class="hero-cta">
-    <a href="#projects" class="btn-magnetic btn-primary">View Work →</a>
-    <a href="#contact" class="btn-magnetic btn-ghost">Get in Touch →</a>
+    <div class="btn-wrap"><a href="#projects" class="btn-magnetic btn-primary">View Work →</a></div>
+    <div class="btn-wrap"><a href="#contact" class="btn-magnetic btn-ghost">Get in Touch →</a></div>
   </div>
-  <div class="hero-scroll"><div class="hero-scroll-line"></div>Scroll</div>
+  <div class="hero-scroll"><span class="char">Scroll</span><div class="hero-scroll-line"></div></div>
 </section>
 
 <!-- PROJECTS -->
 <section id="projects">
-  <div class="section-label reveal">Selected Work</div>
-  <div class="section-title reveal">Projects That <span class="accent">Ship</span></div>
-  <div class="projects-wrapper">
-    <div class="projects-track">
-      <div class="project-card">
-        <div class="project-card-media"><div class="gradient"></div><div class="icon">🚀</div></div>
-        <div class="project-card-body">
-          <div class="project-card-tag">MVP</div>
-          <div class="project-card-name">Sailor Web3 Wallet Intelligence</div>
-          <div class="project-card-desc">Multichain wallet dashboard — portfolio tracking, wallet score, transaction history, security risk, and AI assistance.</div>
-          <div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Wagmi</span><span class="tech-pill">Viem</span></div>
-        </div>
-      </div>
-      <div class="project-card">
-        <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#8b3fff,#00e5ff)"></div><div class="icon">🤖</div></div>
-        <div class="project-card-body">
-          <div class="project-card-tag">Prototype</div>
-          <div class="project-card-name">Sailor Web3 AI Agent</div>
-          <div class="project-card-desc">Modular Web3 AI agent dashboard — DeFi analysis, DAO voting, contract debugging, multi-wallet aggregation.</div>
-          <div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">Gemini</span><span class="tech-pill">Pharos</span></div>
-        </div>
-      </div>
-      <div class="project-card">
-        <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#ff2d78,#8b3fff)"></div><div class="icon">📄</div></div>
-        <div class="project-card-body">
-          <div class="project-card-tag">Live</div>
-          <div class="project-card-name">CV Builder ATS & Modern Resume</div>
-          <div class="project-card-desc">Resume builder — ATS-friendly templates, real-time preview, PDF/DOCX export.</div>
-          <div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">Tailwind</span><span class="tech-pill">PDF Export</span></div>
-        </div>
-      </div>
-      <div class="project-card">
-        <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#00e5ff,#ff6b00)"></div><div class="icon">🗳️</div></div>
-        <div class="project-card-body">
-          <div class="project-card-tag">Live</div>
-          <div class="project-card-name">Voting Web App with X Login</div>
-          <div class="project-card-desc">Voting platform — X account authentication, one verified vote per user.</div>
-          <div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">Auth</span><span class="tech-pill">Vercel</span></div>
-        </div>
-      </div>
-      <div class="project-card">
-        <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#ffd600,#ff6b00)"></div><div class="icon">🎙️</div></div>
-        <div class="project-card-body">
-          <div class="project-card-tag">Live</div>
-          <div class="project-card-name">XMatch</div>
-          <div class="project-card-desc">Anonymous random voice and text chat for X users.</div>
-          <div class="project-card-tech"><span class="tech-pill">Next.js 15</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Tailwind</span></div>
-        </div>
-      </div>
-      <div class="project-card">
-        <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#8b3fff,#ff2d78)"></div><div class="icon">🎬</div></div>
-        <div class="project-card-body">
-          <div class="project-card-tag">Live</div>
-          <div class="project-card-name">AI Clipper Agent</div>
-          <div class="project-card-desc">Local workflow — YouTube video → transcript → smart moment selection → auto short clips.</div>
-          <div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">Python</span><span class="tech-pill">Whisper</span></div>
-        </div>
-      </div>
-      <div class="project-card">
-        <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#ff6b00,#ffd600)"></div><div class="icon">🧬</div></div>
-        <div class="project-card-body">
-          <div class="project-card-tag">Live</div>
-          <div class="project-card-name">Solana Meme Intelligence</div>
-          <div class="project-card-desc">Telegram intelligence + real trading agent for Solana meme coins.</div>
-          <div class="project-card-tech"><span class="tech-pill">Next.js 15</span><span class="tech-pill">Telegraf</span><span class="tech-pill">Solana</span></div>
-        </div>
-      </div>
+  <div class="section-label"><span class="char">Selected Work</span></div>
+  <div class="section-title"><span class="char">Projects That </span><span class="char accent">Ship</span></div>
+  <div class="projects-track" id="pTrack">
+    <div class="project-card">
+      <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,var(--accent),var(--accent2))"></div><div class="icon">🚀</div></div>
+      <div class="project-card-body"><div class="project-card-tag">MVP</div><div class="project-card-name">Sailor Web3 Wallet Intelligence</div><div class="project-card-desc">Multichain wallet dashboard — portfolio tracking, wallet score, transaction history, security risk, and AI assistance.</div><div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Wagmi</span><span class="tech-pill">Viem</span></div></div>
     </div>
-    <div class="drag-hint">Drag to explore</div>
+    <div class="project-card">
+      <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#8b3fff,#00e5ff)"></div><div class="icon">🤖</div></div>
+      <div class="project-card-body"><div class="project-card-tag">Prototype</div><div class="project-card-name">Sailor Web3 AI Agent</div><div class="project-card-desc">Modular Web3 AI agent dashboard — DeFi analysis, DAO voting, contract debugging, multi-wallet aggregation.</div><div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">Gemini</span><span class="tech-pill">Pharos</span></div></div>
+    </div>
+    <div class="project-card">
+      <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#ff2d78,#8b3fff)"></div><div class="icon">📄</div></div>
+      <div class="project-card-body"><div class="project-card-tag">Live</div><div class="project-card-name">CV Builder ATS & Modern Resume</div><div class="project-card-desc">Resume builder — ATS-friendly templates, real-time preview, PDF/DOCX export.</div><div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">Tailwind</span><span class="tech-pill">PDF Export</span></div></div>
+    </div>
+    <div class="project-card">
+      <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#00e5ff,#ff6b00)"></div><div class="icon">🗳️</div></div>
+      <div class="project-card-body"><div class="project-card-tag">Live</div><div class="project-card-name">Voting Web App with X Login</div><div class="project-card-desc">Voting platform — X account authentication, one verified vote per user.</div><div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">Auth</span><span class="tech-pill">Vercel</span></div></div>
+    </div>
+    <div class="project-card">
+      <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#ffd600,#ff6b00)"></div><div class="icon">🎙️</div></div>
+      <div class="project-card-body"><div class="project-card-tag">Live</div><div class="project-card-name">XMatch</div><div class="project-card-desc">Anonymous random voice and text chat for X users.</div><div class="project-card-tech"><span class="tech-pill">Next.js 15</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Tailwind</span></div></div>
+    </div>
+    <div class="project-card">
+      <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#8b3fff,#ff2d78)"></div><div class="icon">🎬</div></div>
+      <div class="project-card-body"><div class="project-card-tag">Live</div><div class="project-card-name">AI Clipper Agent</div><div class="project-card-desc">Local workflow — YouTube video → transcript → smart moment selection → auto short clips.</div><div class="project-card-tech"><span class="tech-pill">Next.js</span><span class="tech-pill">Python</span><span class="tech-pill">Whisper</span></div></div>
+    </div>
+    <div class="project-card">
+      <div class="project-card-media"><div class="gradient" style="background:linear-gradient(135deg,#ff6b00,#ffd600)"></div><div class="icon">🧬</div></div>
+      <div class="project-card-body"><div class="project-card-tag">Live</div><div class="project-card-name">Solana Meme Intelligence</div><div class="project-card-desc">Telegram intelligence + real trading agent for Solana meme coins.</div><div class="project-card-tech"><span class="tech-pill">Next.js 15</span><span class="tech-pill">Telegraf</span><span class="tech-pill">Solana</span></div></div>
+    </div>
   </div>
 </section>
 
 <!-- SERVICES -->
 <section id="services">
-  <div class="section-label reveal">Services</div>
-  <div class="section-title reveal">Everything to <span class="accent">Ship</span></div>
+  <div class="section-label"><span class="char">Services</span></div>
+  <div class="section-title"><span class="char">Everything to </span><span class="char accent">Ship</span></div>
   <div class="services-grid">
-    <div class="service-card reveal"><div class="service-num">01</div><div class="service-name">Wallet Intelligence</div><div class="service-desc">Portfolio tracking, wallet score, transaction insights, and onchain risk signals.</div></div>
-    <div class="service-card reveal reveal-d1"><div class="service-num">02</div><div class="service-name">AI Agent Systems</div><div class="service-desc">Prompt workflows, automation modules, and product-ready AI assistant interfaces.</div></div>
-    <div class="service-card reveal reveal-d2"><div class="service-num">03</div><div class="service-name">Dashboard UI</div><div class="service-desc">Clean analytics screens for Web3 products, campaigns, and founders.</div></div>
-    <div class="service-card reveal"><div class="service-num">04</div><div class="service-name">Community Management</div><div class="service-desc">Managing discussions, maintaining quality, and healthy Web3 community env.</div></div>
-    <div class="service-card reveal reveal-d1"><div class="service-num">05</div><div class="service-name">Content & Ambassador</div><div class="service-desc">Web3 educational content, campaign threads, and project explainers.</div></div>
-    <div class="service-card reveal reveal-d2"><div class="service-num">06</div><div class="service-name">Server & Infra</div><div class="service-desc">VPS setup, Discord server structuring, automation bots, and deployment.</div></div>
+    <div class="service-card"><div class="service-num">01</div><div class="service-name">Wallet Intelligence</div><div class="service-desc">Portfolio tracking, wallet score, transaction insights, and onchain risk signals.</div></div>
+    <div class="service-card"><div class="service-num">02</div><div class="service-name">AI Agent Systems</div><div class="service-desc">Prompt workflows, automation modules, and product-ready AI assistant interfaces.</div></div>
+    <div class="service-card"><div class="service-num">03</div><div class="service-name">Dashboard UI</div><div class="service-desc">Clean analytics screens for Web3 products, campaigns, and founders.</div></div>
+    <div class="service-card"><div class="service-num">04</div><div class="service-name">Community Management</div><div class="service-desc">Managing discussions, maintaining quality, and healthy Web3 community env.</div></div>
+    <div class="service-card"><div class="service-num">05</div><div class="service-name">Content & Ambassador</div><div class="service-desc">Web3 educational content, campaign threads, and project explainers.</div></div>
+    <div class="service-card"><div class="service-num">06</div><div class="service-name">Server & Infra</div><div class="service-desc">VPS setup, Discord server structuring, automation bots, and deployment.</div></div>
   </div>
 </section>
 
 <!-- SKILLS -->
 <section id="skills">
-  <div style="padding:0 8vw">
-    <div class="section-label reveal">Skill Map</div>
-    <div class="section-title reveal">Tools I <span class="accent">Use</span></div>
-  </div>
-  <div class="marquee-wrap">
-    <div class="marquee">
-      <span>Next.js</span><span>·</span><span>TypeScript</span><span>·</span><span>React</span><span>·</span><span>Tailwind</span><span>·</span><span>Web3</span><span>·</span><span>Wagmi</span><span>·</span><span>Viem</span><span>·</span><span>Solana</span><span>·</span>
-      <span>Next.js</span><span>·</span><span>TypeScript</span><span>·</span><span>React</span><span>·</span><span>Tailwind</span><span>·</span><span>Web3</span><span>·</span><span>Wagmi</span><span>·</span><span>Viem</span><span>·</span><span>Solana</span><span>·</span>
-    </div>
-  </div>
-  <div class="marquee-wrap" style="margin-top:8px">
-    <div class="marquee marquee-reverse">
-      <span>Gemini API</span><span>·</span><span>Prompt Engineering</span><span>·</span><span>AI Agents</span><span>·</span><span>Automation</span><span>·</span><span>VPS</span><span>·</span><span>Linux</span><span>·</span><span>GitHub</span><span>·</span><span>Vercel</span><span>·</span>
-      <span>Gemini API</span><span>·</span><span>Prompt Engineering</span><span>·</span><span>AI Agents</span><span>·</span><span>Automation</span><span>·</span><span>VPS</span><span>·</span><span>Linux</span><span>·</span><span>GitHub</span><span>·</span><span>Vercel</span><span>·</span>
-    </div>
-  </div>
+  <div style="padding:0 8vw"><div class="section-label"><span class="char">Skill Map</span></div><div class="section-title"><span class="char">Tools I </span><span class="char accent">Use</span></div></div>
+  <div class="marquee-wrap"><div class="marquee"><span>Next.js</span><span>·</span><span>TypeScript</span><span>·</span><span>React</span><span>·</span><span>Tailwind</span><span>·</span><span>Web3</span><span>·</span><span>Wagmi</span><span>·</span><span>Viem</span><span>·</span><span>Solana</span><span>·</span><span>Next.js</span><span>·</span><span>TypeScript</span><span>·</span><span>React</span><span>·</span><span>Tailwind</span><span>·</span><span>Web3</span><span>·</span><span>Wagmi</span><span>·</span><span>Viem</span><span>·</span><span>Solana</span><span>·</span></div></div>
+  <div class="marquee-wrap" style="margin-top:8px"><div class="marquee marquee-rev"><span>Gemini API</span><span>·</span><span>Prompt Engineering</span><span>·</span><span>AI Agents</span><span>·</span><span>Automation</span><span>·</span><span>VPS</span><span>·</span><span>Linux</span><span>·</span><span>GitHub</span><span>·</span><span>Vercel</span><span>·</span><span>Gemini API</span><span>·</span><span>Prompt Engineering</span><span>·</span><span>AI Agents</span><span>·</span><span>Automation</span><span>·</span><span>VPS</span><span>·</span><span>Linux</span><span>·</span><span>GitHub</span><span>·</span><span>Vercel</span><span>·</span></div></div>
 </section>
 
 <!-- EXPERIENCE -->
 <section id="experience">
-  <div class="section-label reveal">Journey</div>
-  <div class="section-title reveal">Experience & <span class="accent">Track</span></div>
+  <div class="section-label"><span class="char">Journey</span></div>
+  <div class="section-title"><span class="char">Experience & </span><span class="char accent">Track</span></div>
   <div class="timeline">
-    <div class="timeline-item reveal"><div class="timeline-year">2022 — Present</div><div class="timeline-title">Web3 Content Creator</div><div class="timeline-org">Independent</div><div class="timeline-desc">Educational threads, ecosystem research, campaign strategies.</div></div>
-    <div class="timeline-item reveal"><div class="timeline-year">2022 — Present</div><div class="timeline-title">Community Contributor</div><div class="timeline-org">Web3 Ecosystem</div><div class="timeline-desc">Campaign flows, product feedback, user insights.</div></div>
-    <div class="timeline-item reveal"><div class="timeline-year">2023 — Present</div><div class="timeline-title">Web3 Dashboard Builder</div><div class="timeline-org">Personal Projects</div><div class="timeline-desc">Wallet intelligence, onchain data APIs, information architecture.</div></div>
-    <div class="timeline-item reveal"><div class="timeline-year">2024 — Present</div><div class="timeline-title">AI Agent Builder</div><div class="timeline-org">Personal Labs</div><div class="timeline-desc">Agent workflows, AI-assisted products, automation systems.</div></div>
+    <div class="tl-item"><div class="tl-year">2022 — Present</div><div class="tl-title">Web3 Content Creator</div><div class="tl-org">Independent</div><div class="tl-desc">Educational threads, ecosystem research, campaign strategies.</div></div>
+    <div class="tl-item"><div class="tl-year">2022 — Present</div><div class="tl-title">Community Contributor</div><div class="tl-org">Web3 Ecosystem</div><div class="tl-desc">Campaign flows, product feedback, user insights.</div></div>
+    <div class="tl-item"><div class="tl-year">2023 — Present</div><div class="tl-title">Web3 Dashboard Builder</div><div class="tl-org">Personal Projects</div><div class="tl-desc">Wallet intelligence, onchain data APIs, information architecture.</div></div>
+    <div class="tl-item"><div class="tl-year">2024 — Present</div><div class="tl-title">AI Agent Builder</div><div class="tl-org">Personal Labs</div><div class="tl-desc">Agent workflows, AI-assisted products, automation systems.</div></div>
   </div>
 </section>
 
 <!-- CONTACT -->
 <section id="contact">
-  <div class="section-label reveal" style="text-align:center">Get in Touch</div>
-  <div class="contact-title reveal">Let's Build<br>Something <span class="accent">Together</span></div>
-  <div class="contact-links reveal">
+  <div class="section-label" style="text-align:center"><span class="char">Get in Touch</span></div>
+  <div class="contact-title"><span class="line"><span class="char">Let's Build</span></span><span class="line"><span class="char">Something </span><span class="char accent">Together</span></span></div>
+  <div class="contact-links">
     <a href="mailto:kapalapi66100@gmail.com" class="contact-link">Email</a>
     <a href="https://t.me/Hivera01" target="_blank" class="contact-link">Telegram</a>
     <a href="https://x.com/Hivera01" target="_blank" class="contact-link">Twitter/X</a>
@@ -332,69 +301,170 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 <footer>© 2025 Hivera — Built with passion</footer>
 
 <script>
+// ═══════════════════════════════════════════
 // LOADER
-let lp=0;const lb=document.getElementById('loaderBar'),lc=document.getElementById('loaderCounter'),ld=document.getElementById('loader');
-function al(){if(lp<100){lp+=Math.random()*8+2;if(lp>100)lp=100;lb.style.width=lp+'%';lc.textContent=Math.floor(lp)+'%';setTimeout(al,50+Math.random()*40)}else setTimeout(()=>ld.classList.add('hidden'),300)}
-window.addEventListener('load',()=>setTimeout(al,100));
+// ═══════════════════════════════════════════
+let loadVal=0;
+const loadEl=document.getElementById('loaderNum');
+const loader=document.getElementById('loader');
+function tickLoader(){
+  if(loadVal<100){
+    loadVal+=Math.random()*12+3;
+    if(loadVal>100)loadVal=100;
+    loadEl.textContent=Math.floor(loadVal);
+    setTimeout(tickLoader,40+Math.random()*30);
+  }else{
+    loadEl.textContent='100';
+    setTimeout(()=>{loader.classList.add('done');heroReveal()},400);
+  }
+}
+setTimeout(tickLoader,100);
 
+// ═══════════════════════════════════════════
+// HERO REVEAL ANIMATION
+// ═══════════════════════════════════════════
+function heroReveal(){
+  // Eyebrow chars
+  const eyebrowChars=document.querySelectorAll('.hero-eyebrow .char');
+  eyebrowChars.forEach((c,i)=>{setTimeout(()=>{c.style.transition='transform .6s var(--ease),opacity .6s var(--ease)';c.style.opacity='1';c.style.transform='translateY(0)'},i*40)});
+
+  // Title lines — stagger each char
+  document.querySelectorAll('.hero-title .line').forEach((line,li)=>{
+    const chars=line.querySelectorAll('.char');
+    chars.forEach((c,ci)=>{
+      setTimeout(()=>{c.style.transition='transform .8s var(--ease),opacity .8s var(--ease)';c.style.opacity='1';c.style.transform='translateY(0)'},300+li*150+ci*40);
+    });
+  });
+
+  // Subtitle
+  setTimeout(()=>{
+    const subChars=document.querySelectorAll('.hero-sub .char');
+    subChars.forEach((c,i)=>{setTimeout(()=>{c.style.transition='transform .7s var(--ease),opacity .7s var(--ease)';c.style.opacity='1';c.style.transform='translateY(0)'},i*15)});
+  },900);
+
+  // CTA buttons
+  setTimeout(()=>{
+    document.querySelectorAll('.btn-magnetic').forEach((b,i)=>{
+      setTimeout(()=>{b.style.transition='transform .7s var(--ease)';b.style.transform='translateY(0)'},i*120);
+    });
+  },1200);
+
+  // Scroll indicator
+  setTimeout(()=>{
+    document.querySelectorAll('.hero-scroll .char').forEach((c,i)=>{
+      setTimeout(()=>{c.style.transition='transform .5s var(--ease),opacity .5s var(--ease)';c.style.opacity='1';c.style.transform='translateY(0)'},i*50);
+    });
+    document.querySelector('.hero-scroll-line').style.transition='transform .6s var(--ease)';
+    document.querySelector('.hero-scroll-line').style.transform='scaleY(1)';
+  },1500);
+}
+
+// ═══════════════════════════════════════════
+// SCROLL-LINKED SECTION REVEALS
+// ═══════════════════════════════════════════
+function splitReveal(container){
+  container.querySelectorAll('.section-label .char,.section-title .char').forEach((c,i)=>{
+    setTimeout(()=>{c.style.transition='transform .7s var(--ease),opacity .7s var(--ease)';c.style.opacity='1';c.style.transform='translateY(0)'},i*35);
+  });
+}
+
+const sectionObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      // Reveal text chars
+      splitReveal(e.target);
+      // Stagger cards
+      e.target.querySelectorAll('.service-card,.project-card,.tl-item,.contact-link').forEach((card,i)=>{
+        setTimeout(()=>card.classList.add('in-view'),i*100);
+      });
+      sectionObs.unobserve(e.target);
+    }
+  });
+},{threshold:.15,rootMargin:'0px 0px -50px 0px'});
+
+document.querySelectorAll('#projects,#services,#experience,#contact,.contact-links').forEach(s=>sectionObs.observe(s));
+
+// Contact links separate observer
+const linkObs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in-view');linkObs.unobserve(e.target)}});
+},{threshold:.2});
+document.querySelectorAll('.contact-link').forEach(l=>linkObs.observe(l));
+
+// ═══════════════════════════════════════════
+// HORIZONTAL SCROLL — PROJECTS (drag to scroll)
+// ═══════════════════════════════════════════
+const track=document.getElementById('pTrack');
+let dragging=false,startX,scrollL;
+track.addEventListener('mousedown',e=>{dragging=true;startX=e.pageX-track.offsetLeft;scrollL=track.scrollLeft});
+track.addEventListener('mouseleave',()=>dragging=false);
+track.addEventListener('mouseup',()=>dragging=false);
+track.addEventListener('mousemove',e=>{if(!dragging)return;e.preventDefault();track.scrollLeft=scrollL-(e.pageX-track.offsetLeft-track.offsetLeft+startX)*1.2});
+let tSX=0,tSL=0;
+track.addEventListener('touchstart',e=>{tSX=e.touches[0].pageX;tSL=track.scrollLeft});
+track.addEventListener('touchmove',e=>{track.scrollLeft=tSL-(e.touches[0].pageX-tSX)});
+
+// ═══════════════════════════════════════════
+// CUSTOM CURSOR
+// ═══════════════════════════════════════════
+const cDot=document.getElementById('cDot'),cRing=document.getElementById('cRing');
+let cx=0,cy=0,fx=0,fy=0;
+document.addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;cDot.style.left=cx+'px';cDot.style.top=cy+'px'});
+function followCursor(){fx+=(cx-fx)*.1;fy+=(cy-fy)*.1;cRing.style.left=fx+'px';cRing.style.top=fy+'px';requestAnimationFrame(followCursor)}
+followCursor();
+document.querySelectorAll('a,button,.project-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cDot.classList.add('hover');cRing.classList.add('hover')});
+  el.addEventListener('mouseleave',()=>{cDot.classList.remove('hover');cRing.classList.remove('hover')});
+});
+
+// ═══════════════════════════════════════════
+// MAGNETIC BUTTONS
+// ═══════════════════════════════════════════
+document.querySelectorAll('.btn-magnetic').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const x=e.clientX-r.left-r.width/2;const y=e.clientY-r.top-r.height/2;btn.style.transform=`translate(${x*.12}px,${y*.12}px)`});
+  btn.addEventListener('mouseleave',()=>{btn.style.transform='translateY(0)'});
+});
+
+// ═══════════════════════════════════════════
 // SCROLL PROGRESS
-const sp=document.getElementById('scrollProgress');
-window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;sp.style.width=(window.scrollY/h)*100+'%'});
+// ═══════════════════════════════════════════
+const prog=document.getElementById('progress');
+window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;prog.style.width=(window.scrollY/h)*100+'%'});
 
+// ═══════════════════════════════════════════
 // THREE.JS PARTICLES
+// ═══════════════════════════════════════════
 const canvas=document.getElementById('three-bg');
 const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,.1,1000);
-const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
-renderer.setSize(window.innerWidth,window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-camera.position.z=4;
-const COUNT=2500;
-const geo=new THREE.BufferGeometry();
-const pos=new Float32Array(COUNT*3);
-const col=new Float32Array(COUNT*3);
-const vel=new Float32Array(COUNT*3);
+const cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,1000);
+const ren=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+ren.setSize(innerWidth,innerHeight);
+ren.setPixelRatio(Math.min(devicePixelRatio,2));
+cam.position.z=4;
+const N=2800,geo=new THREE.BufferGeometry();
+const p=new Float32Array(N*3),cl=new Float32Array(N*3),vl=new Float32Array(N*3);
 const pal=[[1,.42,0],[.545,.247,1],[0,.898,1],[1,.176,.471]];
-for(let i=0;i<COUNT;i++){
-  pos[i*3]=(Math.random()-.5)*22;pos[i*3+1]=(Math.random()-.5)*22;pos[i*3+2]=(Math.random()-.5)*22;
-  vel[i*3]=(Math.random()-.5)*.002;vel[i*3+1]=(Math.random()-.5)*.002;vel[i*3+2]=(Math.random()-.5)*.002;
-  const c=pal[Math.floor(Math.random()*4)];col[i*3]=c[0];col[i*3+1]=c[1];col[i*3+2]=c[2];
+for(let i=0;i<N;i++){
+  p[i*3]=(Math.random()-.5)*24;p[i*3+1]=(Math.random()-.5)*24;p[i*3+2]=(Math.random()-.5)*24;
+  vl[i*3]=(Math.random()-.5)*.002;vl[i*3+1]=(Math.random()-.5)*.002;vl[i*3+2]=(Math.random()-.5)*.002;
+  const c=pal[i%4];cl[i*3]=c[0];cl[i*3+1]=c[1];cl[i*3+2]=c[2];
 }
-geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-geo.setAttribute('color',new THREE.BufferAttribute(col,3));
-const mat=new THREE.PointsMaterial({size:.015,vertexColors:true,transparent:true,opacity:.5,blending:THREE.AdditiveBlending,sizeAttenuation:true});
+geo.setAttribute('position',new THREE.BufferAttribute(p,3));
+geo.setAttribute('color',new THREE.BufferAttribute(cl,3));
+const mat=new THREE.PointsMaterial({size:.014,vertexColors:true,transparent:true,opacity:.45,blending:THREE.AdditiveBlending,sizeAttenuation:true});
 const pts=new THREE.Points(geo,mat);scene.add(pts);
-
 let mx=0,my=0,sy=0;
-document.addEventListener('mousemove',e=>{mx=(e.clientX/window.innerWidth-.5)*2;my=(e.clientY/window.innerHeight-.5)*2});
-window.addEventListener('scroll',()=>{sy=window.scrollY});
-
+document.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2});
+window.addEventListener('scroll',()=>sy=window.scrollY);
 let t=0;
-function animate(){
-  requestAnimationFrame(animate);t+=.0008;
-  pts.rotation.y=t*.08;pts.rotation.x=t*.04;
-  camera.position.x+=(mx*.5-camera.position.x)*.015;
-  camera.position.y+=(-my*.5-camera.position.y)*.015-sy*.0003;
-  camera.lookAt(scene.position);
-  const p=pts.geometry.attributes.position.array;
-  for(let i=0;i<COUNT;i++){
-    p[i*3+1]+=Math.sin(t*1.5+p[i*3]*.3)*.0004;
-    p[i*3]+=vel[i*3];p[i*3+1]+=vel[i*3+1];p[i*3+2]+=vel[i*3+2];
-    if(Math.abs(p[i*3])>11)vel[i*3]*=-1;
-    if(Math.abs(p[i*3+1])>11)vel[i*3+1]*=-1;
-    if(Math.abs(p[i*3+2])>11)vel[i*3+2]*=-1;
-  }
-  pts.geometry.attributes.position.needsUpdate=true;
-  renderer.render(scene,camera);
-}
-animate();
-window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight)});
+(function anim(){requestAnimationFrame(anim);t+=.0008;pts.rotation.y=t*.08;pts.rotation.x=t*.04;
+cam.position.x+=(mx*.5-cam.position.x)*.015;cam.position.y+=(-my*.5-cam.position.y)*.015-sy*.0003;cam.lookAt(scene.position);
+const pp=pts.geometry.attributes.position.array;
+for(let i=0;i<N;i++){pp[i*3+1]+=Math.sin(t*1.5+pp[i*3]*.3)*.0004;pp[i*3]+=vl[i*3];pp[i*3+1]+=vl[i*3+1];pp[i*3+2]+=vl[i*3+2];
+if(Math.abs(pp[i*3])>12)vl[i*3]*=-1;if(Math.abs(pp[i*3+1])>12)vl[i*3+1]*=-1;if(Math.abs(pp[i*3+2])>12)vl[i*3+2]*=-1;}
+pts.geometry.attributes.position.needsUpdate=true;ren.render(scene,cam)})();
+window.addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();ren.setSize(innerWidth,innerHeight)});
 
-// SCROLL REVEAL
-const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-
-// SMOOTH SCROLL
+// SMOOTH SCROLL NAV
 document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'})})});
 </script>
 </body>
