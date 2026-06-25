@@ -61,14 +61,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
    ═══════════════════════════════════════ */
 #hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 8vw}
 .hero-eyebrow{font-size:11px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-bottom:28px;overflow:hidden}
-.hero-eyebrow .char{display:inline-block;opacity:0;transform:translateY(100%)}
+.hero-eyebrow .char{display:inline-block}
 .hero-title{font-size:clamp(48px,10vw,130px);font-weight:700;line-height:.92;letter-spacing:-4px}
 .hero-title .line{display:block;overflow:hidden;padding-bottom:8px}
-.hero-title .line .char{display:inline-block;opacity:0;transform:translateY(110%)}
+.hero-title .line .char{display:inline-block}
 .hero-title .accent{color:var(--accent)}
 .hero-title .accent2{color:var(--accent2)}
 .hero-sub{max-width:480px;margin-top:40px;font-size:15px;line-height:1.8;color:var(--muted);font-weight:300;overflow:hidden}
-.hero-sub .char{display:inline-block;opacity:0;transform:translateY(100%)}
+.hero-sub .char{display:inline-block}
 .hero-cta{margin-top:40px;display:flex;gap:16px;overflow:hidden}
 .hero-cta .btn-wrap{overflow:hidden}
 .btn-magnetic{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;border-radius:100px;font-family:inherit;font-weight:500;transition:all .4s var(--ease);transform:translateY(110%)}
@@ -77,7 +77,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
 .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.15)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
 .hero-scroll{position:absolute;bottom:40px;left:8vw;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px;overflow:hidden}
-.hero-scroll .char{display:inline-block;opacity:0;transform:translateY(100%)}
+.hero-scroll .char{display:inline-block}
 .hero-scroll-line{width:1px;height:40px;background:var(--muted);transform:scaleY(0);transform-origin:top}
 
 /* ═══════════════════════════════════════
@@ -182,8 +182,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
   .btn-magnetic{width:100%;justify-content:center}
   .contact-links{flex-direction:column;align-items:center}
   .contact-link{width:100%;max-width:260px;text-align:center}
-  .hero-scroll{display:none}
-  .cursor-dot,.cursor-ring{display:none!important}
+    .cursor-dot,.cursor-ring{display:none!important}
 }
 </style>
 </head>
