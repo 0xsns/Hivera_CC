@@ -462,17 +462,21 @@ cam.position.z=4;
 const texCanvas=document.createElement('canvas');
 texCanvas.width=128;texCanvas.height=128;
 const texCtx=texCanvas.getContext('2d');
+// Clear with transparent
+texCtx.clearRect(0,0,128,128);
+// Draw soft circle
 const grad=texCtx.createRadialGradient(64,64,0,64,64,64);
 grad.addColorStop(0,'rgba(255,255,255,1)');
-grad.addColorStop(0.2,'rgba(255,255,255,0.9)');
-grad.addColorStop(0.5,'rgba(255,255,255,0.4)');
-grad.addColorStop(0.8,'rgba(255,255,255,0.1)');
+grad.addColorStop(0.15,'rgba(255,255,255,0.95)');
+grad.addColorStop(0.4,'rgba(255,255,255,0.5)');
+grad.addColorStop(0.7,'rgba(255,255,255,0.15)');
 grad.addColorStop(1,'rgba(255,255,255,0)');
 texCtx.fillStyle=grad;
-texCtx.beginPath();
-texCtx.arc(64,64,64,0,Math.PI*2);
-texCtx.fill();
+texCtx.fillRect(0,0,128,128);
 const circleTex=new THREE.CanvasTexture(texCanvas);
+circleTex.needsUpdate=true;
+circleTex.minFilter=THREE.LinearFilter;
+circleTex.magFilter=THREE.LinearFilter;
 
 const N=10000,geo=new THREE.BufferGeometry();
 const p=new Float32Array(N*3),cl=new Float32Array(N*3),vl=new Float32Array(N*3);
