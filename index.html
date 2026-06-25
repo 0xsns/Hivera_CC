@@ -442,7 +442,7 @@ ren.setPixelRatio(Math.min(devicePixelRatio,2));
 cam.position.z=4;
 const N=2800,geo=new THREE.BufferGeometry();
 const p=new Float32Array(N*3),cl=new Float32Array(N*3),vl=new Float32Array(N*3);
-const pal=[[1,.42,0],[.545,.247,1],[0,.898,1],[1,.176,.471]];
+const pal=[[1,.843,0],[1,.769,.141],[.854,.647,.125],[1,.922,.533]];
 for(let i=0;i<N;i++){
   p[i*3]=(Math.random()-.5)*24;p[i*3+1]=(Math.random()-.5)*24;p[i*3+2]=(Math.random()-.5)*24;
   vl[i*3]=(Math.random()-.5)*.002;vl[i*3+1]=(Math.random()-.5)*.002;vl[i*3+2]=(Math.random()-.5)*.002;
