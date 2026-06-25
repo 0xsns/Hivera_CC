@@ -43,7 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:flex;align-items:center;justify-content:space-between;mix-blend-mode:difference}
 .nav-logo{font-size:13px;letter-spacing:5px;text-transform:uppercase;font-weight:700;text-decoration:none;color:#fff}
 .nav-links{display:flex;gap:36px;list-style:none}
-.nav-links a{color:#fff;text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.35;transition:opacity .4s;position:relative}
+.nav-links a{color:#fff;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.35;transition:opacity .4s;position:relative}
 .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .4s var(--ease)}
 .nav-links a:hover{opacity:1}
 .nav-links a:hover::after{width:100%}
@@ -58,7 +58,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
    HERO — FULLSCREEN
    ═══════════════════════════════════════ */
 #hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 8vw}
-.hero-eyebrow{font-size:10px;letter-spacing:8px;text-transform:uppercase;color:var(--muted);margin-bottom:28px;overflow:hidden}
+.hero-eyebrow{font-size:11px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-bottom:28px;overflow:hidden}
 .hero-eyebrow .char{display:inline-block;opacity:0;transform:translateY(100%)}
 .hero-title{font-size:clamp(48px,10vw,130px);font-weight:700;line-height:.92;letter-spacing:-4px}
 .hero-title .line{display:block;overflow:hidden;padding-bottom:8px}
@@ -74,7 +74,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
 .btn-primary:hover{background:#fff;border-color:#fff}
 .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.15)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.hero-scroll{position:absolute;bottom:40px;left:8vw;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px;overflow:hidden}
+.hero-scroll{position:absolute;bottom:40px;left:8vw;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px;overflow:hidden}
 .hero-scroll .char{display:inline-block;opacity:0;transform:translateY(100%)}
 .hero-scroll-line{width:1px;height:40px;background:var(--muted);transform:scaleY(0);transform-origin:top}
 
@@ -82,7 +82,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
    SECTIONS
    ═══════════════════════════════════════ */
 .section{position:relative;z-index:1;padding:140px 8vw}
-.section-label{font-size:10px;letter-spacing:8px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;overflow:hidden}
+.section-label{font-size:11px;letter-spacing:6px;text-transform:uppercase;color:#888;margin-bottom:16px;overflow:hidden}letter-spacing:8px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;overflow:hidden}
 .section-label .char{display:inline-block;opacity:0;transform:translateY(100%)}
 .section-title{font-size:clamp(32px,5vw,60px);font-weight:700;line-height:1.05;letter-spacing:-2px;overflow:hidden}
 .section-title .char{display:inline-block;opacity:0;transform:translateY(110%)}
@@ -102,11 +102,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
 .project-card-media .icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;color:rgba(255,255,255,.06);transition:all .6s var(--ease)}
 .project-card:hover .icon{transform:scale(1.3);color:rgba(255,255,255,.2)}
 .project-card-body{padding:24px 28px}
-.project-card-tag{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.project-card-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}text-transform:uppercase;color:var(--accent);margin-bottom:10px}
 .project-card-name{font-size:18px;font-weight:600;margin-bottom:8px;line-height:1.3}
-.project-card-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.project-card-desc{font-size:14px;color:#999;line-height:1.7;margin-bottom:16px}
 .project-card-tech{display:flex;flex-wrap:wrap;gap:6px}
-.tech-pill{font-size:9px;padding:4px 10px;border-radius:100px;background:rgba(255,255,255,.03);color:var(--muted);border:1px solid #1a1a1a}
+.tech-pill{font-size:10px;padding:5px 12px;padding:4px 10px;border-radius:100px;background:rgba(255,255,255,.03);color:var(--muted);border:1px solid #1a1a1a}
 
 /* ═══════════════════════════════════════
    SERVICES — STAGGER IN
@@ -119,7 +119,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
 .service-num{font-size:48px;font-weight:700;color:#151515;transition:color .5s;line-height:1}
 .service-card:hover .service-num{color:var(--accent)}
 .service-name{font-size:15px;font-weight:600;margin:16px 0 8px}
-.service-desc{font-size:12px;color:var(--muted);line-height:1.7}
+.service-desc{font-size:13px;color:#999;line-height:1.7}
 
 /* ═══════════════════════════════════════
    SKILLS — MARQUEE
@@ -141,10 +141,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
 .tl-item{padding-left:40px;padding-bottom:48px;position:relative;opacity:0;transform:translateX(-30px);transition:all .7s var(--ease)}
 .tl-item.in-view{opacity:1;transform:translateX(0)}
 .tl-item::before{content:'';position:absolute;left:-4px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 12px rgba(255,107,0,.3)}
-.tl-year{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.tl-year{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .tl-title{font-size:18px;font-weight:600;margin-bottom:4px}
-.tl-org{font-size:12px;color:var(--accent2);margin-bottom:10px}
-.tl-desc{font-size:12px;color:var(--muted);line-height:1.7;max-width:420px}
+.tl-org{font-size:13px;color:var(--accent2);margin-bottom:10px}
+.tl-desc{font-size:13px;color:#999;line-height:1.7;max-width:420px}
 
 /* ═══════════════════════════════════════
    CONTACT
@@ -294,7 +294,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 <section id="contact">
   <div class="section-label" style="text-align:center"><span class="char">Get in Touch</span></div>
   <div class="contact-title"><span class="line"><span class="char">Let's Build</span></span><span class="line"><span class="char">Something </span><span class="char accent">Together</span></span></div>
-  <p class="contact-sub" style="text-align:center;color:var(--muted);font-size:14px;margin-bottom:48px;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto">Have a project in mind? Want to collaborate? Or just want to say hi? Feel free to reach out through any of these platforms.</p>
+  <p class="contact-sub" style="text-align:center;color:#999;font-size:15px;margin-bottom:48px;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto">Have a project in mind? Want to collaborate? Or just want to say hi? Feel free to reach out through any of these platforms.</p>
   <div class="contact-links">
     <a href="mailto:kapalapi66100@gmail.com" class="contact-link">
       <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="#EA4335" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
