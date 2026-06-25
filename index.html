@@ -475,7 +475,7 @@ const loadEl=document.getElementById('loaderNum');
 const loader=document.getElementById('loader');
 function tickLoader(){
   if(loadVal<100){
-    loadVal+=Math.random()*2+0.5;
+    loadVal+=Math.random()*3+1;
     if(loadVal>100)loadVal=100;
     loadEl.textContent=Math.floor(loadVal);if(window._blackHole)window._blackHole.updateProgress(loadVal);
     setTimeout(tickLoader,80+Math.random()*40);
