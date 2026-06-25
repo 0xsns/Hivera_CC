@@ -440,7 +440,7 @@ const ren=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
 ren.setSize(innerWidth,innerHeight);
 ren.setPixelRatio(Math.min(devicePixelRatio,2));
 cam.position.z=4;
-const N=2800,geo=new THREE.BufferGeometry();
+const N=5500,geo=new THREE.BufferGeometry();
 const p=new Float32Array(N*3),cl=new Float32Array(N*3),vl=new Float32Array(N*3);
 const pal=[[1,.843,0],[1,.769,.141],[.854,.647,.125],[1,.922,.533]];
 for(let i=0;i<N;i++){
@@ -450,7 +450,7 @@ for(let i=0;i<N;i++){
 }
 geo.setAttribute('position',new THREE.BufferAttribute(p,3));
 geo.setAttribute('color',new THREE.BufferAttribute(cl,3));
-const mat=new THREE.PointsMaterial({size:.014,vertexColors:true,transparent:true,opacity:.45,blending:THREE.AdditiveBlending,sizeAttenuation:true});
+const mat=new THREE.PointsMaterial({size:.018,vertexColors:true,transparent:true,opacity:.55,blending:THREE.AdditiveBlending,sizeAttenuation:true});
 const pts=new THREE.Points(geo,mat);scene.add(pts);
 let mx=0,my=0,sy=0;
 document.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2});
