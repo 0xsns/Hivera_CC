@@ -92,7 +92,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:f
    PROJECTS — HORIZONTAL SCROLL SECTION
    ═══════════════════════════════════════ */
 #projects{padding:140px 0 140px 8vw;overflow:hidden}
-.projects-track{display:flex;gap:28px;margin-top:56px;will-change:transform}
+.projects-track{display:flex;gap:28px;margin-top:56px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:20px}
+.projects-track::-webkit-scrollbar{display:none}
 .project-card{min-width:min(420px,80vw);background:#0a0a0a;border-radius:16px;overflow:hidden;border:1px solid #151515;flex-shrink:0;opacity:0;transform:translateY(60px) scale(.95)}
 .project-card.in-view{opacity:1;transform:translateY(0) scale(1);transition:all .8s var(--ease)}
 .project-card-media{height:240px;background:#111;position:relative;overflow:hidden}
@@ -170,7 +171,9 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
   #hero{padding:120px 24px 80px}
   .hero-title{letter-spacing:-2px}
   .section{padding:80px 24px}
-  #projects{padding:80px 0 80px 24px}
+  #projects{padding:80px 0 80px 24px;overflow-x:visible}
+  .project-card{min-width:280px;max-width:280px}
+  .project-card-media{height:180px}
   .services-grid{grid-template-columns:1fr}
   .hero-cta{flex-direction:column}
   .btn-magnetic{width:100%;justify-content:center}
