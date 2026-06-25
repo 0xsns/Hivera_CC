@@ -481,12 +481,12 @@ for(let i=0;i<N;i++){
     map:tex,
     color:new THREE.Color(c[0],c[1],c[2]),
     transparent:true,
-    opacity:15,
+    opacity:1500,
     blending:THREE.AdditiveBlending
   });
   const sp=new THREE.Sprite(mat);
   sp.position.set((Math.random()-.5)*24,(Math.random()-.5)*24,(Math.random()-.5)*24);
-  const s=2+Math.random()*3;
+  const s=200+Math.random()*300;
   sp.scale.set(s,s,1);
   sp.userData={vx:(Math.random()-.5)*.002,vy:(Math.random()-.5)*.002,vz:(Math.random()-.5)*.002};
   scene.add(sp);
