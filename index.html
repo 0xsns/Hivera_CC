@@ -326,7 +326,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
 
 <script>
 // ═══════════════════════════════════════════
-// BLACK HOLE LOADER
+// BLACK HOLE LOADER — INTERSTELLAR STYLE
 // ═══════════════════════════════════════════
 (function(){
   const canvas=document.getElementById('blackhole-canvas');
@@ -338,132 +338,206 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 8vw;font-size:
   window.addEventListener('resize',resize);
   
   const cx=()=>W/2, cy=()=>H/2;
-  const particles=[];
-  const COUNT=800;
-  const accretion=[];
-  const ACC_COUNT=200;
+  const stars=[];
+  const STARS=1200;
+  const dust=[];
+  const DUST=300;
   
-  // Create infalling particles
-  for(let i=0;i<COUNT;i++){
+  // Create background stars
+  for(let i=0;i<STARS;i++){
     const angle=Math.random()*Math.PI*2;
-    const dist=150+Math.random()*Math.max(W,H)*0.6;
-    particles.push({
+    const dist=50+Math.random()*Math.max(W,H)*0.8;
+    stars.push({
       x:cx()+Math.cos(angle)*dist,
       y:cy()+Math.sin(angle)*dist,
-      ox:0,oy:0,
       angle:angle,
-      speed:0.3+Math.random()*0.8,
-      size:0.5+Math.random()*1.5,
-      alpha:0.3+Math.random()*0.7,
-      color:Math.random()>0.5?[1,0.65,0]:[1,0.4,0]
+      baseDist:dist,
+      speed:0.2+Math.random()*0.6,
+      size:0.3+Math.random()*1.2,
+      alpha:0.2+Math.random()*0.8,
+      twinkle:Math.random()*Math.PI*2
     });
   }
   
-  // Create accretion disk
-  for(let i=0;i<ACC_COUNT;i++){
+  // Create dust particles
+  for(let i=0;i<DUST;i++){
     const angle=Math.random()*Math.PI*2;
-    const dist=30+Math.random()*80;
-    accretion.push({
+    const dist=80+Math.random()*200;
+    dust.push({
+      x:cx()+Math.cos(angle)*dist,
+      y:cy()+Math.sin(angle)*dist,
       angle:angle,
-      dist:dist,
-      speed:0.02+Math.random()*0.03,
-      size:1+Math.random()*2,
-      alpha:0.4+Math.random()*0.6,
-      hue:30+Math.random()*20
+      speed:0.1+Math.random()*0.3,
+      size:1+Math.random()*3,
+      alpha:0.1+Math.random()*0.3,
+      hue:20+Math.random()*40
     });
   }
   
   let t=0;
   let progress=0;
+  const BH_RADIUS=60;
+  const ACC_RADIUS=120;
   
   function drawBlackHole(){
-    ctx.fillStyle='rgba(0,0,0,0.15)';
+    // Clear with slight trail
+    ctx.fillStyle='rgba(0,0,0,0.12)';
     ctx.fillRect(0,0,W,H);
     
     const centerX=cx(), centerY=cy();
-    const blackHoleRadius=40;
     
-    // Glow
-    const glow=ctx.createRadialGradient(centerX,centerY,blackHoleRadius*0.5,centerX,centerY,blackHoleRadius*4);
-    glow.addColorStop(0,'rgba(255,107,0,0.15)');
-    glow.addColorStop(0.3,'rgba(255,165,0,0.05)');
-    glow.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=glow;
-    ctx.fillRect(0,0,W,H);
+    // === OUTER GLOW (gravitational lensing) ===
+    for(let r=3;r>=1;r--){
+      const glow=ctx.createRadialGradient(centerX,centerY,BH_RADIUS,centerX,centerY,BH_RADIUS+r*80);
+      glow.addColorStop(0,`rgba(255,140,0,${0.08/r})`);
+      glow.addColorStop(0.5,`rgba(255,100,0,${0.04/r})`);
+      glow.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=glow;
+      ctx.beginPath();
+      ctx.arc(centerX,centerY,BH_RADIUS+r*80,0,Math.PI*2);
+      ctx.fill();
+    }
     
-    // Accretion disk
+    // === ACCRETION DISK (elliptical ring) ===
     ctx.save();
     ctx.translate(centerX,centerY);
-    for(const a of accretion){
-      a.angle+=a.speed;
-      const x=Math.cos(a.angle)*a.dist;
-      const y=Math.sin(a.angle)*a.dist*0.3;
-      const pulse=0.7+Math.sin(t*3+a.angle)*0.3;
-      ctx.fillStyle=`hsla(${a.hue},100%,60%,${a.alpha*pulse*0.6})`;
+    for(let ring=0;ring<3;ring++){
+      const ringRadius=ACC_RADIUS+ring*25;
+      const segments=120;
+      for(let i=0;i<segments;i++){
+        const angle=(i/segments)*Math.PI*2+t*(0.3+ring*0.1);
+        const wobble=Math.sin(angle*3+t)*5;
+        const x=Math.cos(angle)*(ringRadius+wobble);
+        const y=Math.sin(angle)*(ringRadius*0.25+wobble*0.3);
+        const pulse=0.5+Math.sin(t*2+i*0.1)*0.5;
+        const fade=Math.abs(Math.sin(angle));
+        const hue=25+Math.sin(angle+t)*15;
+        ctx.fillStyle=`hsla(${hue},100%,${50+ring*10}%,${0.4*pulse*fade*(1-ring*0.2)})`;
+        ctx.beginPath();
+        ctx.arc(x,y,1.5+ring*0.5,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+    
+    // === DUST PARTICLES (being sucked in) ===
+    for(const d of dust){
+      const dx=centerX-d.x;
+      const dy=centerY-d.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      
+      // Spiral inward with gravity
+      d.angle+=0.015*(ACC_RADIUS/Math.max(dist,40));
+      const gravity=0.8*(ACC_RADIUS*2/Math.max(dist,30));
+      d.x+=Math.cos(d.angle)*gravity*0.2+dx/dist*gravity;
+      d.y+=Math.sin(d.angle)*gravity*0.2+dy/dist*gravity;
+      
+      // Reset when too close
+      if(dist<BH_RADIUS*1.2){
+        const a=Math.random()*Math.PI*2;
+        const r=ACC_RADIUS+50+Math.random()*200;
+        d.x=centerX+Math.cos(a)*r;
+        d.y=centerY+Math.sin(a)*r;
+        d.angle=a;
+      }
+      
+      const fade=dist<ACC_RADIUS?dist/ACC_RADIUS:1;
+      ctx.fillStyle=`hsla(${d.hue},80%,50%,${d.alpha*fade})`;
       ctx.beginPath();
-      ctx.arc(x,y,a.size*pulse,0,Math.PI*2);
+      ctx.arc(d.x,d.y,d.size*fade,0,Math.PI*2);
+      ctx.fill();
+    }
+    
+    // === STARS (background, being lensed) ===
+    for(const s of stars){
+      const dx=centerX-s.x;
+      const dy=centerY-s.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      
+      // Gentle spiral
+      s.angle+=0.003;
+      const pull=s.speed*0.3*(ACC_RADIUS*3/Math.max(dist,50));
+      s.x+=Math.cos(s.angle)*pull*0.1+dx/dist*pull*0.1;
+      s.y+=Math.sin(s.angle)*pull*0.1+dy/dist*pull*0.1;
+      
+      // Reset
+      if(dist<BH_RADIUS*2){
+        const a=Math.random()*Math.PI*2;
+        const r=Math.max(W,H)*0.6+Math.random()*200;
+        s.x=centerX+Math.cos(a)*r;
+        s.y=centerY+Math.sin(a)*r;
+        s.angle=a;
+      }
+      
+      // Gravitational lensing distortion
+      const lensFactor=dist<BH_RADIUS*3?1+(BH_RADIUS*3-dist)/(BH_RADIUS*3)*0.5:1;
+      const lensAlpha=dist<BH_RADIUS*3?dist/(BH_RADIUS*3):1;
+      
+      s.twinkle+=0.05;
+      const twinkle=0.5+Math.sin(s.twinkle)*0.5;
+      
+      ctx.fillStyle=`rgba(255,255,255,${s.alpha*lensAlpha*twinkle*0.7})`;
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.size*lensFactor,0,Math.PI*2);
+      ctx.fill();
+    }
+    
+    // === ACCRETION DISK FRONT (bright ring) ===
+    ctx.save();
+    ctx.translate(centerX,centerY);
+    const frontSegments=180;
+    for(let i=0;i<frontSegments;i++){
+      const angle=(i/frontSegments)*Math.PI*2;
+      const x=Math.cos(angle)*ACC_RADIUS;
+      const y=Math.sin(angle)*ACC_RADIUS*0.25;
+      const pulse=0.6+Math.sin(t*3+i*0.05)*0.4;
+      const fade=Math.abs(Math.sin(angle));
+      ctx.fillStyle=`rgba(255,${140+Math.sin(angle)*60},0,${0.7*pulse*fade})`;
+      ctx.beginPath();
+      ctx.arc(x,y,2,0,Math.PI*2);
       ctx.fill();
     }
     ctx.restore();
     
-    // Infalling particles
-    for(const p of particles){
-      const dx=centerX-p.x;
-      const dy=centerY-p.y;
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      
-      // Spiral inward
-      p.angle+=0.02*(100/Math.max(dist,50));
-      const pull=p.speed*(200/Math.max(dist,30));
-      p.x+=Math.cos(p.angle)*pull*0.3+dx/dist*pull;
-      p.y+=Math.sin(p.angle)*pull*0.3+dy/dist*pull;
-      
-      // Reset if too close
-      if(dist<blackHoleRadius*0.8){
-        const resetAngle=Math.random()*Math.PI*2;
-        const resetDist=150+Math.random()*Math.max(W,H)*0.5;
-        p.x=centerX+Math.cos(resetAngle)*resetDist;
-        p.y=centerY+Math.sin(resetAngle)*resetDist;
-        p.angle=resetAngle;
-      }
-      
-      // Draw
-      const fade=dist<200?dist/200:1;
-      ctx.fillStyle=`rgba(${Math.floor(p.color[0]*255)},${Math.floor(p.color[1]*255)},${Math.floor(p.color[2]*255)},${p.alpha*fade})`;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-      ctx.fill();
-    }
-    
-    // Black center
-    const blackGrad=ctx.createRadialGradient(centerX,centerY,0,centerX,centerY,blackHoleRadius);
+    // === BLACK CENTER (event horizon) ===
+    const blackGrad=ctx.createRadialGradient(centerX,centerY,0,centerX,centerY,BH_RADIUS);
     blackGrad.addColorStop(0,'rgba(0,0,0,1)');
-    blackGrad.addColorStop(0.7,'rgba(0,0,0,1)');
+    blackGrad.addColorStop(0.85,'rgba(0,0,0,1)');
     blackGrad.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle=blackGrad;
     ctx.beginPath();
-    ctx.arc(centerX,centerY,blackHoleRadius,0,Math.PI*2);
+    ctx.arc(centerX,centerY,BH_RADIUS,0,Math.PI*2);
     ctx.fill();
     
-    // Event horizon ring
-    ctx.strokeStyle=`rgba(255,140,0,${0.3+Math.sin(t*2)*0.2})`;
-    ctx.lineWidth=1.5;
+    // === EVENT HORIZON GLOW ===
+    ctx.strokeStyle=`rgba(255,160,0,${0.5+Math.sin(t*2)*0.3})`;
+    ctx.lineWidth=2;
     ctx.beginPath();
-    ctx.arc(centerX,centerY,blackHoleRadius+5,0,Math.PI*2);
+    ctx.arc(centerX,centerY,BH_RADIUS+2,0,Math.PI*2);
+    ctx.stroke();
+    
+    // Inner ring
+    ctx.strokeStyle=`rgba(255,200,100,${0.3+Math.sin(t*3)*0.2})`;
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.arc(centerX,centerY,BH_RADIUS-5,0,Math.PI*2);
     ctx.stroke();
     
     t+=0.016;
   }
   
-  // Animation loop
   function animate(){
-    if(progress>=100)return;
+    if(progress>=100){
+      // Fade out
+      ctx.fillStyle='rgba(0,0,0,0.05)';
+      ctx.fillRect(0,0,W,H);
+      return;
+    }
     drawBlackHole();
     requestAnimationFrame(animate);
   }
   animate();
   
-  // Export for loader to use
   window._blackHole={updateProgress:function(p){progress=p}};
 })();
 
